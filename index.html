@@ -6,18 +6,26 @@
   <title>Online GC Sensor Drag-and-Drop Game</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --panel: #111827;
-      --panel2: #1f2937;
-      --panel3: #0b1220;
-      --text: #e5eefc;
-      --muted: #b8c5dd;
-      --accent: #60a5fa;
-      --ok: #22c55e;
-      --warn: #f59e0b;
-      --bad: #ef4444;
-      --zoneBorder: #8ea7c7;
-      --shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+      --bg1: #0b1220;
+      --bg2: #0f172a;
+      --card: #ffffff;
+      --ink: #18263b;
+      --muted: #5a6b83;
+      --line: #d8e2ef;
+      --shadow: 0 18px 40px rgba(9, 20, 40, 0.16);
+      --blue: #5aa7e8;
+      --steel: #8fa4bd;
+      --steel-dark: #6f86a3;
+      --gold: #d7b34c;
+      --gold-dark: #b88d24;
+      --temp: #ef4444;
+      --pressure: #2563eb;
+      --flow: #16a34a;
+      --ok: #16a34a;
+      --warn: #d97706;
+      --bad: #dc2626;
+      --zone: #f8fbff;
+      --zone-border: #9eb2c8;
     }
 
     * { box-sizing: border-box; }
@@ -25,267 +33,202 @@
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(180deg, #0b1020 0%, #0f172a 45%, #101827 100%);
-      color: var(--text);
+      background: linear-gradient(180deg, var(--bg1), var(--bg2));
+      color: #e8eff9;
     }
 
-    .wrap {
-      width: min(1440px, 96vw);
+    .page {
+      width: min(1480px, 96vw);
       margin: 18px auto 28px;
       display: grid;
-      grid-template-columns: 330px 1fr;
-      gap: 18px;
+      gap: 16px;
     }
 
-    .card {
-      background: linear-gradient(180deg, rgba(17,24,39,.98), rgba(15,23,42,.98));
+    .topbar {
+      background: rgba(255,255,255,.05);
       border: 1px solid rgba(255,255,255,.08);
-      border-radius: 22px;
-      box-shadow: var(--shadow);
+      border-radius: 24px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.18);
+      padding: 20px 26px;
+      display: grid;
+      grid-template-columns: 1.4fr .9fr;
+      gap: 16px;
+      align-items: center;
     }
 
-    .sidebar {
-      padding: 18px;
-      align-self: start;
-      position: sticky;
-      top: 12px;
-    }
-
-    h1 {
+    .title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      line-height: 1.05;
       margin: 0 0 8px;
-      font-size: 1.7rem;
-      line-height: 1.1;
     }
 
     .subtitle {
-      color: var(--muted);
-      font-size: .98rem;
+      color: #c4d1e4;
+      font-size: 1.06rem;
       line-height: 1.45;
-      margin-bottom: 14px;
+      max-width: 900px;
+      margin: 0;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+      align-content: flex-start;
     }
 
     .chip {
-      display: inline-block;
-      padding: 6px 10px;
+      background: rgba(96,165,250,.12);
+      border: 1px solid rgba(96,165,250,.28);
+      color: #d7e7fb;
+      padding: 8px 12px;
       border-radius: 999px;
-      background: rgba(96,165,250,.14);
-      border: 1px solid rgba(96,165,250,.35);
-      color: #dbeafe;
-      font-size: .82rem;
-      margin: 0 6px 8px 0;
+      font-size: .9rem;
+      white-space: nowrap;
     }
 
-    .section-title {
-      margin: 16px 0 10px;
-      font-size: 1rem;
-      color: #f8fbff;
+    .stage-card {
+      background: var(--card);
+      color: var(--ink);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid rgba(15,23,42,.06);
     }
 
-    .inventory {
-      display: grid;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .sensor {
+    .stage-header {
+      padding: 18px 24px 12px;
       display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 13px;
-      background: linear-gradient(180deg, #1d283a, #121b2b);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 16px;
-      cursor: grab;
-      user-select: none;
-      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      border-bottom: 1px solid #edf2f7;
+      background: linear-gradient(180deg, #fbfdff, #f5f9fe);
     }
 
-    .sensor:hover { transform: translateY(-1px); border-color: rgba(255,255,255,.16); }
-    .sensor:active { cursor: grabbing; }
-    .sensor.dragging { opacity: .55; transform: rotate(-2deg) scale(.98); }
-
-    .icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      font-size: 1.6rem;
-      font-weight: 700;
-      flex: 0 0 auto;
+    .stage-header h2 {
+      margin: 0 0 6px;
+      font-size: 1.65rem;
+      line-height: 1.1;
+      color: #1b2b44;
     }
 
-    .temp .icon { background: rgba(239,68,68,.16); color: #fecaca; border: 1px solid rgba(239,68,68,.35); }
-    .pressure .icon { background: rgba(59,130,246,.16); color: #bfdbfe; border: 1px solid rgba(59,130,246,.35); }
-    .flow .icon { background: rgba(34,197,94,.16); color: #bbf7d0; border: 1px solid rgba(34,197,94,.35); }
-
-    .sensor .name { font-size: 1rem; font-weight: 700; }
-    .sensor .desc { font-size: .85rem; color: var(--muted); margin-top: 3px; }
-
-    .legend, .tips, .status, .feedback {
-      padding: 12px 13px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: 14px;
-      margin-top: 12px;
-    }
-
-    .legend ul, .tips ul {
-      margin: 8px 0 0 18px;
-      padding: 0;
+    .stage-header p {
+      margin: 0;
       color: var(--muted);
-      line-height: 1.5;
-      font-size: .92rem;
+      font-size: .98rem;
+      line-height: 1.45;
+      max-width: 900px;
     }
 
-    .status-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .metric {
-      padding: 10px;
-      border-radius: 12px;
-      background: rgba(255,255,255,.04);
-      text-align: center;
-    }
-
-    .metric .value { font-size: 1.4rem; font-weight: 800; }
-    .metric .label { color: var(--muted); font-size: .82rem; margin-top: 2px; }
-
-    .controls {
+    .scorebar {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-top: 14px;
+      justify-content: flex-end;
     }
 
-    button {
-      border: 0;
-      border-radius: 14px;
-      padding: 11px 14px;
-      font-size: .95rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform .12s ease, opacity .12s ease;
+    .scorepill {
+      min-width: 108px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 10px 14px;
+      text-align: center;
     }
 
-    button:hover { transform: translateY(-1px); }
-    .primary { background: var(--accent); color: #071320; }
-    .secondary { background: #273449; color: #e8eef8; }
+    .scorepill .value {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #17304d;
+    }
 
-    .board { padding: 14px; }
-
-    .board-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 12px 14px;
+    .scorepill .label {
+      font-size: .8rem;
       color: var(--muted);
-      font-size: .95rem;
+      margin-top: 2px;
     }
 
     .gc-stage {
       position: relative;
-      min-height: 930px;
-      border-radius: 22px;
-      overflow: hidden;
+      min-height: 740px;
       background:
-        radial-gradient(circle at 15% 10%, rgba(96,165,250,.10), transparent 22%),
-        radial-gradient(circle at 85% 15%, rgba(34,197,94,.08), transparent 18%),
-        linear-gradient(180deg, #f8fbff 0%, #edf3fb 100%);
-      border: 1px solid rgba(0,0,0,.08);
+        radial-gradient(circle at 8% 8%, rgba(90,167,232,.12), transparent 22%),
+        radial-gradient(circle at 92% 12%, rgba(22,163,74,.08), transparent 18%),
+        linear-gradient(180deg, #f9fcff 0%, #eef4fb 100%);
+      overflow: hidden;
     }
 
-    .gc-title {
-      position: absolute;
-      left: 26px;
-      top: 20px;
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: #172338;
-    }
+    .pipe { position: absolute; background: var(--steel); border-radius: 999px; }
+    .pipe.dark { background: var(--steel-dark); }
+    .pipe.flowline { background: var(--blue); }
+    .pipe.gold { background: var(--gold); }
 
-    .gc-subtitle {
+    .component, .unit {
       position: absolute;
-      left: 26px;
-      top: 52px;
-      font-size: .96rem;
-      color: #45556d;
-      max-width: 880px;
-      line-height: 1.4;
-    }
-
-    .label {
-      position: absolute;
-      font-size: .9rem;
-      font-weight: 700;
-      color: #1f2d3d;
-      background: rgba(255,255,255,.72);
-      border: 1px solid rgba(31,45,61,.14);
-      border-radius: 10px;
-      padding: 6px 10px;
-      backdrop-filter: blur(3px);
-    }
-
-    .pipe { position: absolute; background: #9fb1c7; border-radius: 999px; }
-    .pipe.dark { background: #7e93ad; }
-    .pipe.flowline { background: #7cc7ff; }
-    .pipe.gold { background: #d9b44a; }
-
-    .unit, .component {
-      position: absolute;
-      background: linear-gradient(180deg, #cfdbea, #b9c8da);
-      border: 2px solid #6e849f;
-      border-radius: 18px;
+      background: linear-gradient(180deg, #d8e3ef, #c2d0e0);
+      border: 3px solid #6e87a7;
+      border-radius: 20px;
       box-shadow: 0 10px 22px rgba(0,0,0,.08);
     }
 
     .component.round { border-radius: 999px; }
-    .component.dark { background: linear-gradient(180deg, #b7c6d8, #9eb2c8); }
-    .component.metal { background: linear-gradient(180deg, #e6edf5, #c7d4e4); }
-    .component.black { background: linear-gradient(180deg, #5b6677, #3c4657); border-color: #2a3340; }
+    .component.dark { background: linear-gradient(180deg, #b7c7d9, #9cb2c9); }
+    .component.black { background: linear-gradient(180deg, #667487, #455163); border-color: #364253; }
+    .component.screenbox { background: linear-gradient(180deg, #dfe8f1, #cfdbe8); }
 
     .screen {
       position: absolute;
       background: #122336;
-      color: #8ff7b8;
-      border-radius: 12px;
-      border: 2px solid #30465d;
+      color: #9af3bf;
+      border-radius: 14px;
+      border: 3px solid #30465d;
       display: grid;
       place-items: center;
       font-weight: 800;
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,.06);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.05);
+    }
+
+    .label {
+      position: absolute;
+      padding: 9px 14px;
+      background: rgba(255,255,255,.88);
+      border: 1px solid #d5e1ec;
+      border-radius: 14px;
+      color: #20314a;
+      font-weight: 800;
+      font-size: .96rem;
+      box-shadow: 0 8px 18px rgba(18,35,54,.05);
+      white-space: nowrap;
     }
 
     .dropzone {
       position: absolute;
-      border: 2px dashed var(--zoneBorder);
-      background: rgba(255,255,255,.72);
-      border-radius: 18px;
+      border: 3px dashed var(--zone-border);
+      background: rgba(255,255,255,.86);
+      border-radius: 22px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      color: #3b4c67;
+      color: #36506f;
       padding: 8px;
       transition: transform .12s ease, background .12s ease, border-color .12s ease, box-shadow .12s ease;
     }
 
-    .dropzone .zone-title { font-size: .88rem; font-weight: 800; }
-    .dropzone .zone-hint { font-size: .76rem; margin-top: 3px; color: #5e728d; }
+    .dropzone .zone-title { font-size: 1rem; font-weight: 800; }
+    .dropzone .zone-hint { font-size: .84rem; color: #637a97; margin-top: 4px; }
     .dropzone.over {
       transform: scale(1.02);
-      background: #fff9db;
+      background: #fff7e7;
       border-color: var(--warn);
-      box-shadow: 0 8px 20px rgba(245,158,11,.18);
+      box-shadow: 0 10px 22px rgba(217,119,6,.18);
     }
     .dropzone.correct {
-      background: #ecfdf5;
+      background: #ecfdf3;
       border-color: var(--ok);
       color: #166534;
     }
@@ -302,7 +245,7 @@
       75% { transform: translateX(3px); }
     }
 
-    .dropzone .placed {
+    .placed {
       width: 100%;
       height: 100%;
       display: flex;
@@ -310,276 +253,314 @@
       justify-content: center;
       gap: 10px;
       font-weight: 800;
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 8px;
     }
-
     .placed.temp { background: rgba(239,68,68,.12); }
-    .placed.pressure { background: rgba(59,130,246,.12); }
-    .placed.flow { background: rgba(34,197,94,.12); }
+    .placed.pressure { background: rgba(37,99,235,.12); }
+    .placed.flow { background: rgba(22,163,74,.12); }
 
-    .placed .mini-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
+    .mini-icon {
+      width: 38px;
+      height: 38px;
       display: grid;
       place-items: center;
-      font-size: 1.15rem;
-      font-weight: 900;
-      background: rgba(255,255,255,.8);
+      border-radius: 12px;
+      background: rgba(255,255,255,.92);
       border: 1px solid rgba(0,0,0,.08);
+      font-size: 1.2rem;
     }
 
     .callout {
       position: absolute;
-      width: 190px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.78);
-      border: 1px solid rgba(31,45,61,.12);
-      color: #32445d;
-      font-size: .82rem;
-      line-height: 1.35;
-      box-shadow: 0 8px 16px rgba(0,0,0,.05);
+      width: 220px;
+      background: rgba(255,255,255,.9);
+      border: 1px solid #d6e1eb;
+      border-radius: 18px;
+      padding: 12px 14px;
+      font-size: .88rem;
+      line-height: 1.4;
+      color: #41556f;
+      box-shadow: 0 10px 22px rgba(0,0,0,.06);
     }
 
-    .callout strong { color: #142033; }
+    .callout strong { color: #1b2d47; }
+
+    .bottom-panel {
+      display: grid;
+      grid-template-columns: 1.2fr .9fr;
+      gap: 16px;
+      padding: 18px 22px 22px;
+      border-top: 1px solid #edf2f7;
+      background: linear-gradient(180deg, #fbfdff, #f6f9fd);
+    }
+
+    .tray, .feedback {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: 0 8px 18px rgba(12,26,46,.05);
+    }
+
+    .tray h3, .feedback h3 {
+      margin: 0 0 12px;
+      color: #19304c;
+      font-size: 1.08rem;
+    }
+
+    .inventory {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .sensor {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 18px;
+      cursor: grab;
+      user-select: none;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #fcfeff, #f2f7fc);
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+      min-height: 94px;
+    }
+
+    .sensor:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(15,23,42,.08); }
+    .sensor.dragging { opacity: .55; transform: rotate(-2deg) scale(.98); }
+
+    .icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-size: 1.65rem;
+      font-weight: 800;
+      flex: 0 0 auto;
+      border: 1px solid rgba(0,0,0,.08);
+    }
+
+    .temp .icon { background: rgba(239,68,68,.12); color: #dc2626; }
+    .pressure .icon { background: rgba(37,99,235,.12); color: #1d4ed8; }
+    .flow .icon { background: rgba(22,163,74,.12); color: #15803d; }
+
+    .sensor .name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #19304c;
+    }
+
+    .sensor .desc {
+      color: var(--muted);
+      font-size: .85rem;
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    .feedback p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: .94rem;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 11px 14px;
+      font-size: .95rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .12s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    .primary { background: #2563eb; color: #fff; }
+    .secondary { background: #e8eef7; color: #19304c; }
 
     .footer-note {
-      position: absolute;
-      left: 26px;
-      bottom: 18px;
-      right: 26px;
-      color: #52657e;
-      font-size: .88rem;
-      padding-top: 10px;
-      border-top: 1px solid rgba(0,0,0,.08);
+      margin-top: 12px;
+      color: #60728b;
+      font-size: .84rem;
+      line-height: 1.45;
     }
 
-    @media (max-width: 1100px) {
-      .wrap { grid-template-columns: 1fr; }
-      .sidebar { position: static; }
+    @media (max-width: 1200px) {
+      .topbar, .bottom-panel { grid-template-columns: 1fr; }
+      .chips, .scorebar { justify-content: flex-start; }
     }
 
-    @media (max-width: 760px) {
-      .gc-stage {
-        min-height: 980px;
-        overflow-x: auto;
-      }
-      .gc-stage-inner {
-        position: relative;
-        width: 1120px;
-        min-height: 980px;
-      }
+    @media (max-width: 900px) {
+      .inventory { grid-template-columns: 1fr; }
+      .gc-stage { overflow-x: auto; min-height: 760px; }
+      .gc-inner { width: 1180px; min-height: 760px; position: relative; }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <aside class="sidebar card">
-      <h1>Online GC Sensor Hunt</h1>
-      <div class="subtitle">
-        Drag the <strong>temperature</strong>, <strong>pressure</strong>, and <strong>flow</strong> sensor icons to the correct locations inside a realistic online process gas chromatograph schematic.
-      </div>
-
+  <div class="page">
+    <section class="topbar">
       <div>
+        <div class="title">Interactive Learning Game</div>
+        <p class="subtitle">Locate the temperature, pressure, and flow sensors in an online gas chromatograph. A cleaner horizontal layout designed for professional training, GitHub Pages, and LinkedIn sharing.</p>
+      </div>
+      <div class="chips">
         <span class="chip">Professional GC schematic</span>
-        <span class="chip">Drag & drop challenge</span>
+        <span class="chip">Drag-and-drop challenge</span>
         <span class="chip">Calibration awareness</span>
+        <span class="chip">Analyser training</span>
       </div>
+    </section>
 
-      <div class="section-title">Sensors to place</div>
-      <div class="inventory" id="inventory">
-        <div class="sensor temp" draggable="true" data-sensor="temperature">
-          <div class="icon">🌡</div>
-          <div>
-            <div class="name">Temperature Sensor</div>
-            <div class="desc">Best placed where oven or heated sample conditioning stability matters.</div>
-          </div>
+    <section class="stage-card">
+      <div class="stage-header">
+        <div>
+          <h2>Locate the Sensors in an Online Process Gas Chromatograph</h2>
+          <p>Place each sensor in the most logical internal location. Think process-first: pressure before stable transport, flow through the metered path, and temperature inside the oven where separation stability matters.</p>
         </div>
-
-        <div class="sensor pressure" draggable="true" data-sensor="pressure">
-          <div class="icon">⏲</div>
-          <div>
-            <div class="name">Pressure Sensor</div>
-            <div class="desc">Best placed where regulated sample or carrier gas pressure matters.</div>
-          </div>
-        </div>
-
-        <div class="sensor flow" draggable="true" data-sensor="flow">
-          <div class="icon">💨</div>
-          <div>
-            <div class="name">Flow Sensor</div>
-            <div class="desc">Best placed where steady sample or carrier flow is essential.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="legend">
-        <strong>Goal</strong>
-        <ul>
-          <li>Place each sensor on the most logical GC location.</li>
-          <li>Each correct drop explains why that sensor matters.</li>
-          <li>Analyser calibration depends on supporting sensor integrity.</li>
-        </ul>
-      </div>
-
-      <div class="status">
-        <strong>Progress</strong>
-        <div class="status-grid">
-          <div class="metric">
+        <div class="scorebar">
+          <div class="scorepill">
             <div class="value" id="scoreValue">0/3</div>
             <div class="label">Correct</div>
           </div>
-          <div class="metric">
+          <div class="scorepill">
             <div class="value" id="triesValue">0</div>
             <div class="label">Tries</div>
           </div>
-          <div class="metric">
+          <div class="scorepill">
             <div class="value" id="hintValue">3</div>
             <div class="label">Hints</div>
           </div>
         </div>
       </div>
 
-      <div class="feedback" id="feedbackBox">
-        <strong>Feedback</strong>
-        <div id="feedbackText" style="margin-top:8px;color:var(--muted);line-height:1.45;">Start with the process logic: regulated pressure before stable delivery, flow control through the sample path, and temperature control inside the oven.</div>
-      </div>
-
-      <div class="controls">
-        <button class="primary" id="checkBtn">Check Answers</button>
-        <button class="secondary" id="hintBtn">Use Hint</button>
-        <button class="secondary" id="resetBtn">Reset Game</button>
-      </div>
-
-      <div class="tips">
-        <strong>Quick clues</strong>
-        <ul>
-          <li><strong>Temperature</strong> supports oven and separation stability.</li>
-          <li><strong>Pressure</strong> supports regulator and sample integrity.</li>
-          <li><strong>Flow</strong> supports representative sample delivery.</li>
-        </ul>
-      </div>
-    </aside>
-
-    <main class="board card">
-      <div class="board-header">
-        <div>Challenge: place 3 sensor types inside this online gas chromatograph.</div>
-        <div>Professional schematic view for teaching and LinkedIn sharing.</div>
-      </div>
-
       <div class="gc-stage">
-        <div class="gc-stage-inner">
-          <div class="gc-title">Online Process Gas Chromatograph — Sensor Placement Challenge</div>
-          <div class="gc-subtitle">A schematic-style online GC showing sample inlet, conditioning, regulator, flow section, switching valves, column oven, detector and vent. Drag each sensor to the most logical position.</div>
+        <div class="gc-inner">
+          <div class="label" style="left:44px; top:70px;">Sample In</div>
+          <div class="label" style="left:180px; top:110px;">Sample Filter / Coalescer</div>
+          <div class="label" style="left:378px; top:86px;">Pressure Regulator</div>
+          <div class="label" style="left:566px; top:86px;">Flow Control / Metering</div>
+          <div class="label" style="left:748px; top:318px;">Column Oven</div>
+          <div class="label" style="left:960px; top:88px;">Detector</div>
+          <div class="label" style="left:1086px; top:172px;">Vent</div>
+          <div class="label" style="left:205px; top:430px;">Carrier Gas / Valve Manifold</div>
 
-          <div class="label" style="left:34px; top:108px;">Sample In</div>
-          <div class="label" style="left:150px; top:145px;">Sample Filter / Coalescer</div>
-          <div class="label" style="left:310px; top:120px;">Pressure Regulator</div>
-          <div class="label" style="left:520px; top:122px;">Flow Control / Metering</div>
-          <div class="label" style="left:650px; top:360px;">Column Oven</div>
-          <div class="label" style="left:860px; top:118px;">Detector</div>
-          <div class="label" style="left:952px; top:230px;">Vent</div>
-          <div class="label" style="left:165px; top:474px;">Carrier Gas / Valve Manifold</div>
+          <!-- upper line -->
+          <div class="pipe dark" style="left:46px; top:190px; width:140px; height:20px;"></div>
+          <div class="pipe dark" style="left:182px; top:190px; width:162px; height:20px;"></div>
+          <div class="pipe dark" style="left:338px; top:190px; width:198px; height:20px;"></div>
+          <div class="pipe flowline" style="left:532px; top:190px; width:168px; height:20px;"></div>
+          <div class="pipe gold" style="left:696px; top:190px; width:274px; height:20px;"></div>
+          <div class="pipe dark" style="left:964px; top:190px; width:126px; height:20px;"></div>
+          <div class="pipe dark" style="left:1080px; top:190px; width:20px; height:112px;"></div>
 
-          <!-- top process path -->
-          <div class="pipe dark" style="left:36px; top:214px; width:120px; height:18px;"></div>
-          <div class="pipe dark" style="left:150px; top:214px; width:124px; height:18px;"></div>
-          <div class="pipe dark" style="left:272px; top:214px; width:204px; height:18px;"></div>
-          <div class="pipe flowline" style="left:474px; top:214px; width:145px; height:18px;"></div>
-          <div class="pipe gold" style="left:616px; top:214px; width:220px; height:18px;"></div>
-          <div class="pipe dark" style="left:834px; top:214px; width:126px; height:18px;"></div>
-          <div class="pipe dark" style="left:952px; top:214px; width:18px; height:118px;"></div>
+          <!-- inlet and filter -->
+          <div class="component round" style="left:96px; top:162px; width:54px; height:54px;"></div>
+          <div class="component" style="left:186px; top:132px; width:76px; height:116px;"></div>
+          <div class="component dark" style="left:266px; top:142px; width:90px; height:98px;"></div>
 
-          <!-- inlet / filter -->
-          <div class="component round metal" style="left:78px; top:194px; width:34px; height:34px;"></div>
-          <div class="component metal" style="left:148px; top:178px; width:58px; height:88px;"></div>
-          <div class="component dark" style="left:206px; top:184px; width:66px; height:76px;"></div>
+          <!-- regulator -->
+          <div class="component" style="left:380px; top:102px; width:176px; height:142px;"></div>
+          <div class="component round" style="left:444px; top:62px; width:80px; height:80px;"></div>
+          <div class="component black" style="left:554px; top:144px; width:34px; height:76px;"></div>
 
-          <!-- pressure regulator block -->
-          <div class="component metal" style="left:315px; top:156px; width:132px; height:104px;"></div>
-          <div class="component round" style="left:349px; top:128px; width:58px; height:58px;"></div>
-          <div class="component black" style="left:440px; top:180px; width:28px; height:54px;"></div>
-
-          <!-- flow control section -->
-          <div class="component metal" style="left:500px; top:166px; width:118px; height:94px;"></div>
-          <div class="component round" style="left:530px; top:136px; width:50px; height:50px;"></div>
-          <div class="screen" style="left:585px; top:176px; width:42px; height:32px; font-size:.95rem;">2.50</div>
-          <div class="pipe dark" style="left:549px; top:259px; width:16px; height:112px;"></div>
-
-          <!-- oven -->
-          <div class="unit" style="left:582px; top:390px; width:320px; height:260px; background:linear-gradient(180deg,#d5e1ee,#c3d3e4);">
-            <div style="position:absolute; inset:18px; border-radius:16px; background:linear-gradient(180deg,#fdf3cc,#f1cf62); border:2px solid #9f7d1b;"></div>
-            <div style="position:absolute; left:40px; top:40px; right:40px; bottom:40px; border-radius:18px; background:linear-gradient(180deg,#fff8df,#f7dd83); border:2px solid #8c6e1f;"></div>
-            <div style="position:absolute; left:70px; top:72px; width:182px; height:118px; border:5px solid #bc9442; border-radius:50%;"></div>
-            <div style="position:absolute; left:98px; top:95px; width:126px; height:74px; border:4px solid #b58828; border-radius:50%;"></div>
-            <div class="screen" style="left:250px; top:24px; width:54px; height:36px; font-size:.95rem;">70°C</div>
-          </div>
+          <!-- flow control -->
+          <div class="component" style="left:610px; top:116px; width:158px; height:126px;"></div>
+          <div class="component round" style="left:660px; top:72px; width:64px; height:64px;"></div>
+          <div class="screen" style="left:736px; top:138px; width:62px; height:46px; font-size:1rem;">2.50</div>
+          <div class="pipe dark" style="left:687px; top:240px; width:18px; height:126px;"></div>
 
           <!-- detector -->
-          <div class="component metal" style="left:848px; top:162px; width:98px; height:108px;"></div>
-          <div class="component round" style="left:861px; top:131px; width:36px; height:36px;"></div>
-          <div class="component black" style="left:812px; top:120px; width:54px; height:48px;"></div>
+          <div class="component screenbox" style="left:950px; top:138px; width:116px; height:102px;"></div>
+          <div class="component black" style="left:918px; top:128px; width:52px; height:46px;"></div>
+          <div class="component round" style="left:1000px; top:108px; width:36px; height:36px;"></div>
 
-          <!-- lower manifold / valves -->
-          <div class="pipe dark" style="left:118px; top:558px; width:360px; height:18px;"></div>
-          <div class="pipe flowline" style="left:474px; top:558px; width:108px; height:18px;"></div>
-          <div class="pipe dark" style="left:314px; top:576px; width:18px; height:78px;"></div>
-          <div class="component metal" style="left:142px; top:522px; width:82px; height:72px;"></div>
-          <div class="component round" style="left:236px; top:528px; width:56px; height:56px;"></div>
-          <div class="component metal" style="left:300px; top:520px; width:118px; height:86px;"></div>
-          <div class="screen" style="left:186px; top:538px; width:44px; height:28px; font-size:.85rem;">He</div>
+          <!-- oven -->
+          <div class="unit" style="left:724px; top:372px; width:366px; height:248px; background:linear-gradient(180deg,#dce6f1,#cad8e6);">
+            <div style="position:absolute; inset:20px; border-radius:18px; background:linear-gradient(180deg,#fdf2bf,#efcd59); border:3px solid #ab8326;"></div>
+            <div style="position:absolute; left:30px; top:30px; right:30px; bottom:30px; border-radius:18px; background:linear-gradient(180deg,#fff7dd,#f4dc8b); border:3px solid #b58b2b;"></div>
+            <div style="position:absolute; left:82px; top:84px; width:194px; height:116px; border:6px solid #bb8d2d; border-radius:50%;"></div>
+            <div style="position:absolute; left:118px; top:112px; width:124px; height:62px; border:4px solid #bc8b28; border-radius:50%;"></div>
+            <div class="screen" style="left:286px; top:26px; width:60px; height:38px; font-size:.95rem;">70°C</div>
+          </div>
+
+          <!-- lower manifold -->
+          <div class="pipe dark" style="left:110px; top:520px; width:416px; height:20px;"></div>
+          <div class="pipe flowline" style="left:522px; top:520px; width:206px; height:20px;"></div>
+          <div class="pipe dark" style="left:334px; top:538px; width:18px; height:88px;"></div>
+          <div class="component" style="left:146px; top:482px; width:90px; height:84px;"></div>
+          <div class="component round" style="left:248px; top:490px; width:62px; height:62px;"></div>
+          <div class="component" style="left:322px; top:478px; width:136px; height:96px;"></div>
+          <div class="screen" style="left:188px; top:500px; width:50px; height:30px; font-size:.86rem;">He</div>
 
           <!-- analyser display -->
-          <div class="component metal" style="left:790px; top:505px; width:230px; height:126px;"></div>
-          <div class="screen" style="left:824px; top:526px; width:160px; height:82px; font-size:2rem;">10.8%</div>
-          <div class="label" style="left:840px; top:620px;">Analyser Result</div>
-
-          <!-- drain and controller -->
-          <div class="pipe dark" style="left:930px; top:736px; width:150px; height:18px;"></div>
-          <div class="component metal" style="left:962px; top:674px; width:86px; height:96px;"></div>
-          <div class="label" style="left:958px; top:780px;">PLC / Controller</div>
-          <div class="label" style="left:792px; top:714px;">Sample Out / Drain</div>
+          <div class="component screenbox" style="left:946px; top:476px; width:168px; height:128px;"></div>
+          <div class="screen" style="left:970px; top:502px; width:120px; height:70px; font-size:1.9rem;">10.8%</div>
+          <div class="label" style="left:982px; top:614px;">Analyser Result</div>
 
           <!-- drop zones -->
-          <div class="dropzone" id="zone-pressure" data-accept="pressure" style="left:308px; top:286px; width:174px; height:88px;">
+          <div class="dropzone" id="zone-pressure" data-accept="pressure" style="left:384px; top:276px; width:190px; height:100px;">
             <div class="zone-title">Drop sensor here</div>
             <div class="zone-hint">Regulated pressure section</div>
           </div>
 
-          <div class="dropzone" id="zone-flow" data-accept="flow" style="left:496px; top:286px; width:126px; height:88px;">
-            <div class="zone-title">Drop</div>
+          <div class="dropzone" id="zone-flow" data-accept="flow" style="left:602px; top:276px; width:154px; height:100px;">
+            <div class="zone-title">Drop sensor here</div>
             <div class="zone-hint">Controlled flow path</div>
           </div>
 
-          <div class="dropzone" id="zone-temperature" data-accept="temperature" style="left:656px; top:288px; width:172px; height:88px;">
+          <div class="dropzone" id="zone-temperature" data-accept="temperature" style="left:802px; top:276px; width:194px; height:100px;">
             <div class="zone-title">Drop sensor here</div>
             <div class="zone-hint">Oven / heated zone</div>
           </div>
 
           <!-- callouts -->
-          <div class="callout" style="left:42px; top:314px;">
+          <div class="callout" style="left:56px; top:286px;">
             <strong>Sample conditioning</strong><br>
             Removes liquid and debris before the sample reaches critical GC components.
           </div>
 
-          <div class="callout" style="left:44px; top:654px; width:250px;">
+          <div class="callout" style="left:72px; top:618px; width:280px;">
             <strong>Carrier gas and switching valves</strong><br>
-            Stable upstream conditions support repeatable injection and reliable peak separation.
+            Stable support conditions improve repeatable injection and peak separation.
           </div>
 
-          <div class="callout" style="left:870px; top:322px; width:182px;">
-            <strong>Detector and output</strong><br>
-            The final analyser value depends on stable upstream temperature, pressure and flow.
-          </div>
-
-          <div class="footer-note">
-            Educational schematic: internal sensor calibration affects analyser calibration. Wrong oven temperature, unstable regulator pressure, or drifting sample flow can all compromise chromatographic reliability.
+          <div class="callout" style="left:1044px; top:300px; width:200px;">
+            <strong>Detector section</strong><br>
+            Final output can only be trusted if internal supporting sensors are accurate.
           </div>
         </div>
       </div>
-    </main>
+
+      <div class="bottom-panel">
+        <div class="tray">
+          <h3>Sensors to place</h3>
+          <div class="inventory" id="inventory"></div>
+          <div class="footer-note">Tip: in a real analyser, wrong internal sensor calibration can create a stable-looking but inaccurate final result.</div>
+        </div>
+
+        <div class="feedback">
+          <h3>Feedback and controls</h3>
+          <p id="feedbackText">Start with the process logic: pressure before stable transport, flow through the metered sample path, and temperature inside the oven.</p>
+          <div class="controls">
+            <button class="primary" id="checkBtn">Check Answers</button>
+            <button class="secondary" id="hintBtn">Use Hint</button>
+            <button class="secondary" id="resetBtn">Reset Game</button>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 
   <script>
@@ -608,44 +589,35 @@
         label: 'Temperature Sensor',
         icon: '🌡',
         className: 'temp',
-        success: 'Correct. The temperature sensor belongs at the oven / heated zone because GC separation quality depends strongly on stable oven temperature.'
+        desc: 'Best placed where oven or heated sample conditioning stability matters.',
+        success: 'Correct. The temperature sensor belongs at the oven because GC separation quality depends on stable temperature.'
       },
       pressure: {
         label: 'Pressure Sensor',
         icon: '⏲',
         className: 'pressure',
-        success: 'Correct. The pressure sensor belongs at the regulated pressure section because pressure stability affects sample integrity, transport and repeatability.'
+        desc: 'Best placed where regulated sample or carrier gas pressure matters.',
+        success: 'Correct. The pressure sensor belongs at the regulator section because pressure stability affects sample integrity and repeatability.'
       },
       flow: {
         label: 'Flow Sensor',
         icon: '💨',
         className: 'flow',
-        success: 'Correct. The flow sensor belongs in the controlled flow path because representative sample delivery depends on stable sample or carrier flow.'
+        desc: 'Best placed where steady sample or carrier flow is essential.',
+        success: 'Correct. The flow sensor belongs in the metered flow path because representative delivery depends on stable flow.'
       }
     };
 
-    const inventoryMarkup = () => `
-      <div class="sensor temp" draggable="true" data-sensor="temperature">
-        <div class="icon">🌡</div>
-        <div>
-          <div class="name">Temperature Sensor</div>
-          <div class="desc">Best placed where oven or heated sample conditioning stability matters.</div>
-        </div>
-      </div>
-      <div class="sensor pressure" draggable="true" data-sensor="pressure">
-        <div class="icon">⏲</div>
-        <div>
-          <div class="name">Pressure Sensor</div>
-          <div class="desc">Best placed where regulated sample or carrier gas pressure matters.</div>
-        </div>
-      </div>
-      <div class="sensor flow" draggable="true" data-sensor="flow">
-        <div class="icon">💨</div>
-        <div>
-          <div class="name">Flow Sensor</div>
-          <div class="desc">Best placed where steady sample or carrier flow is essential.</div>
-        </div>
-      </div>`;
+    function inventoryMarkup() {
+      return Object.entries(sensorMeta).map(([key, meta]) => `
+        <div class="sensor ${meta.className}" draggable="true" data-sensor="${key}">
+          <div class="icon">${meta.icon}</div>
+          <div>
+            <div class="name">${meta.label}</div>
+            <div class="desc">${meta.desc}</div>
+          </div>
+        </div>`).join('');
+    }
 
     function makePlacedMarkup(sensorType) {
       const meta = sensorMeta[sensorType];
@@ -682,9 +654,6 @@
       zone.classList.remove('correct', 'incorrect', 'over');
       zone.dataset.placed = '';
       zone.innerHTML = `<div class="zone-title">Drop sensor here</div><div class="zone-hint">${zoneHints[zone.id]}</div>`;
-      if (zone.id === 'zone-flow') {
-        zone.innerHTML = `<div class="zone-title">Drop</div><div class="zone-hint">${zoneHints[zone.id]}</div>`;
-      }
     }
 
     zones.forEach(zone => {
@@ -716,7 +685,7 @@
         } else {
           zone.classList.add('incorrect');
           feedbackText.textContent = `Not quite. ${sensorMeta[sensorType].label} does not belong there. Think about the process role of that GC section.`;
-          setTimeout(() => zone.classList.remove('incorrect'), 650);
+          setTimeout(() => zone.classList.remove('incorrect'), 700);
         }
 
         updateStats();
@@ -727,22 +696,22 @@
     function checkForWin() {
       const correct = document.querySelectorAll('.dropzone.correct').length;
       if (correct === 3) {
-        feedbackText.innerHTML = '<strong>Excellent.</strong> You placed all three sensors correctly. This shows the core analyser principle: internal supporting sensors must be right before the final GC calibration can be trusted.';
+        feedbackText.innerHTML = '<strong>Excellent.</strong> You placed all three sensors correctly. This demonstrates a core analyser principle: internal supporting sensor calibration must be right before analyser calibration can be trusted.';
       }
     }
 
     checkBtn.addEventListener('click', () => {
       const missing = Array.from(zones).filter(z => !z.classList.contains('correct')).map(z => z.dataset.accept);
       if (!missing.length) {
-        feedbackText.innerHTML = '<strong>All correct.</strong> This online GC now has the correct sensor logic in the correct internal sections.';
+        feedbackText.innerHTML = '<strong>All correct.</strong> This online GC now has the right sensor logic in the right sections.';
       } else {
-        feedbackText.textContent = `Still missing: ${missing.join(', ')}. Remember: oven = temperature, regulator = pressure, metered sample path = flow.`;
+        feedbackText.textContent = `Still missing: ${missing.join(', ')}. Remember: regulator = pressure, metering = flow, oven = temperature.`;
       }
     });
 
     hintBtn.addEventListener('click', () => {
       if (hints <= 0) {
-        feedbackText.textContent = 'No hints left. Use the process logic: regulator, flow section, and oven.';
+        feedbackText.textContent = 'No hints left. Use the process logic: regulator, flow metering, and oven.';
         return;
       }
       hints -= 1;
@@ -752,13 +721,12 @@
         updateStats();
         return;
       }
-
       if (next.dataset.accept === 'temperature') {
-        feedbackText.textContent = 'Hint: find the section that directly affects chromatographic separation conditions.';
+        feedbackText.textContent = 'Hint: find the heated section that most strongly influences chromatographic separation.';
       } else if (next.dataset.accept === 'pressure') {
-        feedbackText.textContent = 'Hint: look for the section that stabilizes incoming sample or carrier pressure.';
+        feedbackText.textContent = 'Hint: find the section that stabilises incoming sample or carrier gas pressure.';
       } else {
-        feedbackText.textContent = 'Hint: look for the section that meters and stabilizes sample or carrier gas delivery.';
+        feedbackText.textContent = 'Hint: find the section that meters and stabilises the delivered sample or carrier flow.';
       }
       updateStats();
     });
@@ -766,10 +734,10 @@
     resetBtn.addEventListener('click', () => {
       tries = 0;
       hints = 3;
-      feedbackText.textContent = 'Game reset. Start with the process logic: regulated pressure before stable delivery, flow control through the sample path, and temperature control inside the oven.';
+      feedbackText.textContent = 'Start with the process logic: pressure before stable transport, flow through the metered sample path, and temperature inside the oven.';
       inventory.innerHTML = inventoryMarkup();
-      zones.forEach(resetZone);
       attachDraggables();
+      zones.forEach(resetZone);
       updateStats();
     });
 
