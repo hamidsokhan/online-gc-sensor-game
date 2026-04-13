@@ -187,26 +187,24 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      font-weight: 800;
-      color: #14304c;
-      background: rgba(255,255,255,.82);
+      background: rgba(255,255,255,.86);
       border: 1px solid rgba(0,0,0,.08);
     }
 
-    .placed.temp { background: rgba(254,226,226,.92); }
-    .placed.pressure { background: rgba(219,234,254,.92); }
-    .placed.flow { background: rgba(220,252,231,.92); }
-    .placed.detector { background: rgba(243,232,255,.92); }
+    .placed.temp { background: rgba(254,226,226,.95); }
+    .placed.pressure { background: rgba(219,234,254,.95); }
+    .placed.flow { background: rgba(220,252,231,.95); }
+    .placed.fid { background: rgba(243,232,255,.95); }
+    .placed.pid { background: rgba(254,243,199,.95); }
 
     .mini-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
       display: grid;
       place-items: center;
-      font-size: 1.05rem;
-      background: rgba(255,255,255,.88);
+      font-size: 1.15rem;
+      background: rgba(255,255,255,.92);
       border: 1px solid rgba(0,0,0,.08);
     }
 
@@ -235,7 +233,7 @@
 
     .inventory {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 12px;
     }
 
@@ -277,7 +275,8 @@
     .temp .icon { background: rgba(239,68,68,.12); color: #dc2626; }
     .pressure .icon { background: rgba(37,99,235,.12); color: #1d4ed8; }
     .flow .icon { background: rgba(22,163,74,.12); color: #15803d; }
-    .detector .icon { background: rgba(168,85,247,.14); color: #7e22ce; }
+    .fid .icon { background: rgba(168,85,247,.14); color: #7e22ce; }
+    .pid .icon { background: rgba(245,158,11,.14); color: #b45309; }
 
     .sensor .name {
       font-size: .96rem;
@@ -344,17 +343,17 @@
   <div class="page">
     <section class="header">
       <h1 class="title">Interactive Learning Game</h1>
-      <p class="subtitle">Locate the core internal components in an online gas chromatograph: temperature sensor, pressure sensor, flow sensor, and detector.</p>
+      <p class="subtitle">Locate the core internal components in an online gas chromatograph: temperature sensor, pressure sensor, flow sensor, FID detector, and PID detector.</p>
     </section>
 
     <section class="game-card">
       <div class="topbar">
         <div class="topbar-left">
           <h2>Online GC Core Placement Challenge</h2>
-          <p>Place the four critical elements in the most logical locations inside the GC: pressure, flow, temperature, and detector.</p>
+          <p>Place the five critical elements in the most logical locations inside the GC: pressure, flow, temperature, FID, and PID.</p>
         </div>
         <div class="stats">
-          <div class="stat"><div class="value" id="scoreValue">0/4</div><div class="label">Correct</div></div>
+          <div class="stat"><div class="value" id="scoreValue">0/5</div><div class="label">Correct</div></div>
           <div class="stat"><div class="value" id="triesValue">0</div><div class="label">Tries</div></div>
           <div class="stat"><div class="value" id="hintValue">3</div><div class="label">Hints</div></div>
         </div>
@@ -362,20 +361,29 @@
 
       <div class="board-wrap">
         <div class="board">
-          <div class="dropzone" id="zone-pressure" data-accept="pressure" style="left:39.0%; top:42.3%; width:13.3%; height:16.2%;">
-            <div class="zone-label">Pressure regulator / pressure section</div>
-          </div>
-
-          <div class="dropzone" id="zone-flow" data-accept="flow" style="left:69.2%; top:49.7%; width:12.0%; height:16.2%;">
-            <div class="zone-label">Flow path / carrier control</div>
-          </div>
-
-          <div class="dropzone" id="zone-temperature" data-accept="temperature" style="left:61.7%; top:28.7%; width:16.5%; height:16.3%;">
+          <!-- temperature / heated zone -->
+          <div class="dropzone" id="zone-temperature" data-accept="temperature" style="left:6.7%; top:53.8%; width:25.8%; height:14.0%;">
             <div class="zone-label">Temperature-controlled section</div>
           </div>
 
-          <div class="dropzone" id="zone-detector" data-accept="detector" style="left:84.9%; top:30.0%; width:11.0%; height:16.0%;">
-            <div class="zone-label">Detector area</div>
+          <!-- pressure section -->
+          <div class="dropzone" id="zone-pressure" data-accept="pressure" style="left:28.9%; top:63.2%; width:18.2%; height:12.0%;">
+            <div class="zone-label">Pressure section</div>
+          </div>
+
+          <!-- flow section -->
+          <div class="dropzone" id="zone-flow" data-accept="flow" style="left:61.0%; top:52.0%; width:17.7%; height:14.5%;">
+            <div class="zone-label">Flow section</div>
+          </div>
+
+          <!-- FID detector -->
+          <div class="dropzone" id="zone-fid" data-accept="fid" style="left:80.6%; top:52.0%; width:15.5%; height:12.8%;">
+            <div class="zone-label">FID detector</div>
+          </div>
+
+          <!-- PID detector -->
+          <div class="dropzone" id="zone-pid" data-accept="pid" style="left:80.8%; top:67.0%; width:15.3%; height:11.6%;">
+            <div class="zone-label">PID detector</div>
           </div>
         </div>
       </div>
@@ -384,12 +392,12 @@
         <div class="tray">
           <h3>Components to place</h3>
           <div class="inventory" id="inventory"></div>
-          <div class="footer-note">This version focuses on the core GC elements only. It is cleaner, more realistic, and easier to use for a professional learning game.</div>
+          <div class="footer-note">Dropped locations now show icon only, without names, for a cleaner professional look.</div>
         </div>
 
         <div class="feedback-box">
           <h3>Feedback and controls</h3>
-          <p id="feedbackText">Start with process logic: pressure near regulation, flow in the metered carrier path, temperature in the heated section, and detector at the outlet analysis end.</p>
+          <p id="feedbackText">Start with the process logic: pressure near regulation, flow in the metered carrier path, temperature in the heated section, and the two detector types at the outlet analysis end.</p>
           <div class="controls">
             <button class="primary" id="checkBtn">Check Progress</button>
             <button class="secondary" id="hintBtn">Use Hint</button>
@@ -437,12 +445,19 @@
         desc: 'For controlled carrier or sample flow path.',
         success: 'Correct. The flow sensor belongs in the metered flow / carrier control path.'
       },
-      detector: {
-        label: 'Detector',
-        icon: '🧪',
-        className: 'detector',
-        desc: 'Final measurement element at the outlet analysis end.',
-        success: 'Correct. The detector belongs at the analyser output side where components are finally measured.'
+      fid: {
+        label: 'FID Detector',
+        icon: '🔥',
+        className: 'fid',
+        desc: 'Flame Ionization Detector placement.',
+        success: 'Correct. The FID belongs at the detector outlet section.'
+      },
+      pid: {
+        label: 'PID Detector',
+        icon: '💡',
+        className: 'pid',
+        desc: 'Photoionization Detector placement.',
+        success: 'Correct. The PID belongs at the detector outlet section.'
       }
     };
 
@@ -463,7 +478,6 @@
       return `
         <div class="placed ${meta.className}">
           <div class="mini-icon">${meta.icon}</div>
-          <div>${meta.label}</div>
         </div>
       `;
     }
@@ -485,7 +499,7 @@
 
     function updateStats() {
       const correct = document.querySelectorAll('.dropzone.correct').length;
-      scoreValue.textContent = `${correct}/4`;
+      scoreValue.textContent = `${correct}/5`;
       triesValue.textContent = String(tries);
       hintValue.textContent = String(hints);
     }
@@ -537,8 +551,8 @@
 
     function checkForWin() {
       const correct = document.querySelectorAll('.dropzone.correct').length;
-      if (correct === 4) {
-        feedbackText.innerHTML = '<strong>Excellent.</strong> You placed all four core GC elements correctly: temperature, pressure, flow, and detector.';
+      if (correct === 5) {
+        feedbackText.innerHTML = '<strong>Excellent.</strong> You placed all five core GC elements correctly: temperature, pressure, flow, FID, and PID.';
       }
     }
 
@@ -547,7 +561,7 @@
       if (!missing.length) {
         feedbackText.innerHTML = '<strong>All correct.</strong> This GC training layout is complete.';
       } else {
-        feedbackText.textContent = `Still missing: ${missing.join(', ')}. Start with pressure, flow, temperature, then detector.`;
+        feedbackText.textContent = `Still missing: ${missing.join(', ')}. Start with pressure, flow, temperature, then finish FID and PID.`;
       }
     });
 
@@ -568,7 +582,8 @@
       if (accepted === 'pressure') feedbackText.textContent = 'Hint: pressure belongs near the regulator area.';
       else if (accepted === 'flow') feedbackText.textContent = 'Hint: flow belongs in the metered carrier / flow path.';
       else if (accepted === 'temperature') feedbackText.textContent = 'Hint: temperature belongs where heating is controlled.';
-      else if (accepted === 'detector') feedbackText.textContent = 'Hint: detector belongs near the outlet analysis end of the GC.';
+      else if (accepted === 'fid') feedbackText.textContent = 'Hint: FID is one of the detector modules on the outlet side.';
+      else if (accepted === 'pid') feedbackText.textContent = 'Hint: PID is the second detector module on the outlet side.';
 
       updateStats();
     });
@@ -576,7 +591,7 @@
     resetBtn.addEventListener('click', () => {
       tries = 0;
       hints = 3;
-      feedbackText.textContent = 'Start with process logic: pressure near regulation, flow in the metered carrier path, temperature in the heated section, and detector at the outlet analysis end.';
+      feedbackText.textContent = 'Start with the process logic: pressure near regulation, flow in the metered carrier path, temperature in the heated section, and the two detector types at the outlet analysis end.';
       inventory.innerHTML = inventoryMarkup();
       attachDraggables();
       zones.forEach(resetZone);
