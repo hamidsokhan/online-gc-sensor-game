@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Online GC Sensor Drag-and-Drop Game</title>
+  <title>Online GC Sensor and Detector Drag-and-Drop Game</title>
   <style>
     :root {
       --bg: #0b1220;
@@ -197,11 +197,7 @@
     .placed.temp { background: rgba(254,226,226,.92); }
     .placed.pressure { background: rgba(219,234,254,.92); }
     .placed.flow { background: rgba(220,252,231,.92); }
-    .placed.humidity { background: rgba(224,242,254,.92); }
-    .placed.efc { background: rgba(254,243,199,.92); }
-    .placed.voc { background: rgba(243,232,255,.92); }
-    .placed.co { background: rgba(209,250,229,.92); }
-    .placed.ghg { background: rgba(224,231,255,.92); }
+    .placed.detector { background: rgba(243,232,255,.92); }
 
     .mini-icon {
       width: 34px;
@@ -281,11 +277,7 @@
     .temp .icon { background: rgba(239,68,68,.12); color: #dc2626; }
     .pressure .icon { background: rgba(37,99,235,.12); color: #1d4ed8; }
     .flow .icon { background: rgba(22,163,74,.12); color: #15803d; }
-    .humidity .icon { background: rgba(14,165,233,.12); color: #0284c7; }
-    .efc .icon { background: rgba(245,158,11,.14); color: #b45309; }
-    .voc .icon { background: rgba(168,85,247,.14); color: #7e22ce; }
-    .co .icon { background: rgba(16,185,129,.14); color: #047857; }
-    .ghg .icon { background: rgba(99,102,241,.14); color: #4338ca; }
+    .detector .icon { background: rgba(168,85,247,.14); color: #7e22ce; }
 
     .sensor .name {
       font-size: .96rem;
@@ -342,7 +334,6 @@
     }
 
     @media (max-width: 900px) {
-      .topbar { flex-direction: column; align-items: flex-start; }
       .inventory { grid-template-columns: 1fr; }
       .board-wrap { overflow-x: auto; }
       .board { width: 1365px; }
@@ -353,68 +344,52 @@
   <div class="page">
     <section class="header">
       <h1 class="title">Interactive Learning Game</h1>
-      <p class="subtitle">Locate the sensors in an online gas chromatograph. This version uses your more complex GC illustration and supports a larger multi-sensor drag-and-drop challenge.</p>
+      <p class="subtitle">Locate the core internal components in an online gas chromatograph: temperature sensor, pressure sensor, flow sensor, and detector.</p>
     </section>
 
     <section class="game-card">
       <div class="topbar">
         <div class="topbar-left">
-          <h2>Online GC Multi-Sensor Placement Challenge</h2>
-          <p>Drag each sensor to the most logical location in the analyser. Some sensors are core process sensors, while others support sample quality, control, or gas-specific measurement.</p>
+          <h2>Online GC Core Placement Challenge</h2>
+          <p>Place the four critical elements in the most logical locations inside the GC: pressure, flow, temperature, and detector.</p>
         </div>
         <div class="stats">
-          <div class="stat"><div class="value" id="scoreValue">0/8</div><div class="label">Correct</div></div>
+          <div class="stat"><div class="value" id="scoreValue">0/4</div><div class="label">Correct</div></div>
           <div class="stat"><div class="value" id="triesValue">0</div><div class="label">Tries</div></div>
-          <div class="stat"><div class="value" id="hintValue">4</div><div class="label">Hints</div></div>
+          <div class="stat"><div class="value" id="hintValue">3</div><div class="label">Hints</div></div>
         </div>
       </div>
 
       <div class="board-wrap">
         <div class="board">
-          <div class="dropzone" id="zone-pressure" data-accept="pressure" style="left:6.4%; top:36.5%; width:22.6%; height:10.5%;">
-            <div class="zone-label">Pressure regulator</div>
+          <div class="dropzone" id="zone-pressure" data-accept="pressure" style="left:39.0%; top:42.3%; width:13.3%; height:16.2%;">
+            <div class="zone-label">Pressure regulator / pressure section</div>
           </div>
 
-          <div class="dropzone" id="zone-manifold" data-accept="efc" style="left:6.4%; top:52.2%; width:22.6%; height:9.7%;">
-            <div class="zone-label">Carrier gas & switching valves</div>
+          <div class="dropzone" id="zone-flow" data-accept="flow" style="left:69.2%; top:49.7%; width:12.0%; height:16.2%;">
+            <div class="zone-label">Flow path / carrier control</div>
           </div>
 
-          <div class="dropzone" id="zone-flow" data-accept="flow" style="left:62.5%; top:34.6%; width:18.3%; height:11.3%;">
-            <div class="zone-label">Controlled flow path</div>
+          <div class="dropzone" id="zone-temperature" data-accept="temperature" style="left:61.7%; top:28.7%; width:16.5%; height:16.3%;">
+            <div class="zone-label">Temperature-controlled section</div>
           </div>
 
-          <div class="dropzone" id="zone-oven" data-accept="temperature" style="left:62.5%; top:51.0%; width:18.3%; height:10.8%;">
-            <div class="zone-label">Oven / heated zone</div>
-          </div>
-
-          <div class="dropzone" id="zone-sample-quality" data-accept="humidity" style="left:6.5%; top:65.8%; width:15.2%; height:9.0%;">
-            <div class="zone-label">Sample moisture quality</div>
-          </div>
-
-          <div class="dropzone" id="zone-detector-gas" data-accept="voc" style="left:84.0%; top:35.4%; width:12.0%; height:11.8%;">
-            <div class="zone-label">VOC / detector area</div>
-          </div>
-
-          <div class="dropzone" id="zone-result-co" data-accept="co" style="left:69.6%; top:63.0%; width:12.0%; height:10.0%;">
-            <div class="zone-label">CO reading</div>
-          </div>
-
-          <div class="dropzone" id="zone-result-ghg" data-accept="ghg" style="left:83.2%; top:63.0%; width:12.0%; height:10.0%;">
-            <div class="zone-label">GHG reading</div>
+          <div class="dropzone" id="zone-detector" data-accept="detector" style="left:84.9%; top:30.0%; width:11.0%; height:16.0%;">
+            <div class="zone-label">Detector area</div>
           </div>
         </div>
       </div>
 
       <div class="bottom">
         <div class="tray">
-          <h3>Sensors to place</h3>
+          <h3>Components to place</h3>
           <div class="inventory" id="inventory"></div>
-          <div class="footer-note">This version is intentionally more complex. It can be used as a richer learning game or simplified later by removing selected sensors and zones.</div>
+          <div class="footer-note">This version focuses on the core GC elements only. It is cleaner, more realistic, and easier to use for a professional learning game.</div>
         </div>
 
         <div class="feedback-box">
           <h3>Feedback and controls</h3>
-          <p id="feedbackText">Start with the obvious core process sensors first: pressure, flow, and temperature. Then place the supporting and gas-specific sensors.</p>
+          <p id="feedbackText">Start with process logic: pressure near regulation, flow in the metered carrier path, temperature in the heated section, and detector at the outlet analysis end.</p>
           <div class="controls">
             <button class="primary" id="checkBtn">Check Progress</button>
             <button class="secondary" id="hintBtn">Use Hint</button>
@@ -438,76 +413,37 @@
 
     let dragged = null;
     let tries = 0;
-    let hints = 4;
+    let hints = 3;
 
     const sensorMeta = {
       temperature: {
         label: 'Temperature Sensor',
         icon: '🌡',
         className: 'temp',
-        desc: 'Supports oven and heated section stability.',
-        success: 'Correct. Temperature belongs at the oven / heated zone because chromatographic separation depends on stable thermal conditions.'
+        desc: 'For heated sections, oven, or temperature-critical conditioning.',
+        success: 'Correct. The temperature sensor belongs in the heated / temperature-controlled section.'
       },
       pressure: {
         label: 'Pressure Sensor',
         icon: '⏲',
         className: 'pressure',
-        desc: 'Supports regulated sample pressure.',
-        success: 'Correct. Pressure belongs at the regulator section because sample integrity and repeatability depend on pressure stability.'
+        desc: 'For pressure regulation and stable sample delivery.',
+        success: 'Correct. The pressure sensor belongs near the pressure regulator section.'
       },
       flow: {
         label: 'Flow Sensor',
         icon: '💨',
         className: 'flow',
-        desc: 'Supports controlled sample or carrier flow.',
-        success: 'Correct. Flow belongs in the controlled flow path because stable delivery is essential for representative analysis.'
+        desc: 'For controlled carrier or sample flow path.',
+        success: 'Correct. The flow sensor belongs in the metered flow / carrier control path.'
       },
-      humidity: {
-        label: 'Humidity Sensor',
-        icon: '💧',
-        className: 'humidity',
-        desc: 'Supports sample moisture quality awareness.',
-        success: 'Correct. Humidity belongs at sample quality / moisture monitoring because water can affect GC conditioning and measurement integrity.'
-      },
-      efc: {
-        label: 'EFC Sensor',
-        icon: '⚙️',
-        className: 'efc',
-        desc: 'Electronic flow / carrier switching control.',
-        success: 'Correct. EFC belongs near carrier gas and switching valves because that is where electronic flow and control logic are most relevant.'
-      },
-      voc: {
-        label: 'VOC Sensor',
+      detector: {
+        label: 'Detector',
         icon: '🧪',
-        className: 'voc',
-        desc: 'Used for detector-side VOC-related analysis.',
-        success: 'Correct. VOC belongs near the detector or gas-specific analysis area where compound-specific measurement is interpreted.'
-      },
-      co: {
-        label: 'CO Sensor',
-        icon: '🟢',
-        className: 'co',
-        desc: 'Represents CO-specific reading or output.',
-        success: 'Correct. CO is best treated as a gas-specific output / result position in this training version.'
-      },
-      ghg: {
-        label: 'GHG Sensor',
-        icon: '🌍',
-        className: 'ghg',
-        desc: 'Represents greenhouse-gas result / output.',
-        success: 'Correct. GHG is used here as a gas-result placement tied to final interpreted analyser output.'
+        className: 'detector',
+        desc: 'Final measurement element at the outlet analysis end.',
+        success: 'Correct. The detector belongs at the analyser output side where components are finally measured.'
       }
-    };
-
-    const zoneTitles = {
-      pressure: 'Pressure regulator',
-      manifold: 'Carrier gas & switching valves',
-      flow: 'Controlled flow path',
-      oven: 'Oven / heated zone',
-      'sample-quality': 'Sample moisture quality',
-      'detector-gas': 'VOC / detector area',
-      'result-co': 'CO reading',
-      'result-ghg': 'GHG reading'
     };
 
     function inventoryMarkup() {
@@ -549,7 +485,7 @@
 
     function updateStats() {
       const correct = document.querySelectorAll('.dropzone.correct').length;
-      scoreValue.textContent = `${correct}/8`;
+      scoreValue.textContent = `${correct}/4`;
       triesValue.textContent = String(tries);
       hintValue.textContent = String(hints);
     }
@@ -557,8 +493,7 @@
     function resetZone(zone) {
       zone.classList.remove('correct', 'incorrect', 'over');
       zone.dataset.placed = '';
-      const original = zone.dataset.original;
-      zone.innerHTML = `<div class="zone-label">${original}</div>`;
+      zone.innerHTML = `<div class="zone-label">${zone.dataset.original}</div>`;
     }
 
     zones.forEach(zone => {
@@ -591,7 +526,7 @@
           feedbackText.textContent = sensorMeta[sensorType].success;
         } else {
           zone.classList.add('incorrect');
-          feedbackText.textContent = `Not quite. ${sensorMeta[sensorType].label} does not belong there in this training layout.`;
+          feedbackText.textContent = `Not quite. ${sensorMeta[sensorType].label} does not belong there.`;
           setTimeout(() => zone.classList.remove('incorrect'), 700);
         }
 
@@ -602,23 +537,23 @@
 
     function checkForWin() {
       const correct = document.querySelectorAll('.dropzone.correct').length;
-      if (correct === 8) {
-        feedbackText.innerHTML = '<strong>Excellent.</strong> You placed all sensors correctly. This complex version demonstrates that analyser accuracy depends on both core process sensors and supporting gas-specific or quality-related signals.';
+      if (correct === 4) {
+        feedbackText.innerHTML = '<strong>Excellent.</strong> You placed all four core GC elements correctly: temperature, pressure, flow, and detector.';
       }
     }
 
     checkBtn.addEventListener('click', () => {
       const missing = Array.from(zones).filter(z => !z.classList.contains('correct')).map(z => z.dataset.accept);
       if (!missing.length) {
-        feedbackText.innerHTML = '<strong>All correct.</strong> This GC training image now has all eight sensors placed correctly.';
+        feedbackText.innerHTML = '<strong>All correct.</strong> This GC training layout is complete.';
       } else {
-        feedbackText.textContent = `Still missing: ${missing.join(', ')}. Start with pressure, flow, and temperature, then finish the supporting and gas-specific positions.`;
+        feedbackText.textContent = `Still missing: ${missing.join(', ')}. Start with pressure, flow, temperature, then detector.`;
       }
     });
 
     hintBtn.addEventListener('click', () => {
       if (hints <= 0) {
-        feedbackText.textContent = 'No hints left. Focus on core process zones first, then gas-specific result areas.';
+        feedbackText.textContent = 'No hints left. Think process flow from inlet to output.';
         return;
       }
       hints -= 1;
@@ -630,22 +565,18 @@
       }
 
       const accepted = next.dataset.accept;
-      if (accepted === 'pressure') feedbackText.textContent = 'Hint: pressure belongs where sample regulation happens before stable transport.';
-      else if (accepted === 'flow') feedbackText.textContent = 'Hint: flow belongs in the controlled metering path.';
-      else if (accepted === 'temperature') feedbackText.textContent = 'Hint: temperature belongs in the oven / heated section.';
-      else if (accepted === 'humidity') feedbackText.textContent = 'Hint: humidity is best linked with sample moisture quality.';
-      else if (accepted === 'efc') feedbackText.textContent = 'Hint: EFC belongs near carrier gas control and switching valves.';
-      else if (accepted === 'voc') feedbackText.textContent = 'Hint: VOC is tied to detector-side gas-specific analysis.';
-      else if (accepted === 'co') feedbackText.textContent = 'Hint: CO is treated here as a final gas-reading output.';
-      else if (accepted === 'ghg') feedbackText.textContent = 'Hint: GHG is treated here as a greenhouse-gas result area.';
+      if (accepted === 'pressure') feedbackText.textContent = 'Hint: pressure belongs near the regulator area.';
+      else if (accepted === 'flow') feedbackText.textContent = 'Hint: flow belongs in the metered carrier / flow path.';
+      else if (accepted === 'temperature') feedbackText.textContent = 'Hint: temperature belongs where heating is controlled.';
+      else if (accepted === 'detector') feedbackText.textContent = 'Hint: detector belongs near the outlet analysis end of the GC.';
 
       updateStats();
     });
 
     resetBtn.addEventListener('click', () => {
       tries = 0;
-      hints = 4;
-      feedbackText.textContent = 'Start with the obvious core process sensors first: pressure, flow, and temperature. Then place the supporting and gas-specific sensors.';
+      hints = 3;
+      feedbackText.textContent = 'Start with process logic: pressure near regulation, flow in the metered carrier path, temperature in the heated section, and detector at the outlet analysis end.';
       inventory.innerHTML = inventoryMarkup();
       attachDraggables();
       zones.forEach(resetZone);
@@ -654,7 +585,6 @@
 
     inventory.innerHTML = inventoryMarkup();
     attachDraggables();
-    zones.forEach(zone => zone.dataset.original = zone.textContent.trim());
     updateStats();
   </script>
 </body>
