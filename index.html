@@ -18,31 +18,28 @@
       --shadow: 0 16px 36px rgba(12, 24, 40, 0.16);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
       background: linear-gradient(180deg, #09111d, #0f172a);
       color: #e8eef8;
-      padding: 20px;
     }
 
     .page {
       width: min(1480px, 96vw);
-      margin: 0 auto;
+      margin: 18px auto 28px;
       display: grid;
       gap: 16px;
     }
 
     .header {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
       border-radius: 24px;
       padding: 20px 24px;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+      box-shadow: 0 12px 28px rgba(0,0,0,.18);
     }
 
     .title {
@@ -65,7 +62,7 @@
       border-radius: 28px;
       box-shadow: var(--shadow);
       overflow: hidden;
-      border: 1px solid rgba(15, 23, 42, 0.06);
+      border: 1px solid rgba(15,23,42,.06);
     }
 
     .topbar {
@@ -87,7 +84,7 @@
     .topbar-left p {
       margin: 0;
       color: var(--muted);
-      font-size: 0.96rem;
+      font-size: .96rem;
       line-height: 1.45;
     }
 
@@ -115,7 +112,7 @@
     .stat .label {
       margin-top: 2px;
       color: var(--muted);
-      font-size: 0.78rem;
+      font-size: .78rem;
     }
 
     .board-wrap {
@@ -129,52 +126,48 @@
       max-width: 1365px;
       margin: 0 auto;
       aspect-ratio: 1365 / 768;
-      background: #e9f3fb url("gc-cover-banner.png") center/contain no-repeat;
+      background: #e9f3fb url('gc-cover-banner.png') center/contain no-repeat;
       border-radius: 22px;
       overflow: hidden;
       border: 1px solid #dbe6f0;
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.4);
     }
 
     .dropzone {
       position: absolute;
       border: 3px dashed #89a3bf;
       border-radius: 18px;
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255,255,255,.12);
       backdrop-filter: blur(1px);
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
       padding: 8px;
-      transition:
-        transform 0.12s ease,
-        border-color 0.12s ease,
-        background 0.12s ease,
-        box-shadow 0.12s ease;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease, box-shadow .12s ease;
       z-index: 5;
     }
 
     .dropzone.over {
       transform: scale(1.02);
       border-color: var(--warn);
-      background: rgba(255, 248, 220, 0.6);
-      box-shadow: 0 10px 18px rgba(217, 119, 6, 0.16);
+      background: rgba(255,248,220,.6);
+      box-shadow: 0 10px 18px rgba(217,119,6,.16);
     }
 
     .dropzone.correct {
       border-color: var(--ok);
-      background: rgba(236, 253, 243, 0.7);
+      background: rgba(236,253,243,.7);
     }
 
     .dropzone.incorrect {
       border-color: var(--bad);
-      background: rgba(254, 242, 242, 0.76);
-      animation: shake 0.22s linear 2;
+      background: rgba(254,242,242,.76);
+      animation: shake .22s linear 2;
     }
 
     @keyframes shake {
-      0%, 100% { transform: translateX(0); }
+      0%,100% { transform: translateX(0); }
       25% { transform: translateX(-3px); }
       75% { transform: translateX(3px); }
     }
@@ -184,7 +177,7 @@
       font-size: 1rem;
       color: #2f4a67;
       line-height: 1.25;
-      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+      text-shadow: 0 1px 0 rgba(255,255,255,.55);
     }
 
     .placed {
@@ -194,47 +187,45 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.88);
-      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(0,0,0,.08);
     }
 
-    .placed.temp { background: rgba(254, 226, 226, 0.95); }
-    .placed.pressure { background: rgba(219, 234, 254, 0.95); }
-    .placed.flow { background: rgba(220, 252, 231, 0.95); }
-    .placed.fid { background: rgba(243, 232, 255, 0.95); }
-    .placed.pid { background: rgba(254, 243, 199, 0.95); }
+    .placed.temp { background: rgba(254,226,226,.95); }
+    .placed.pressure { background: rgba(219,234,254,.95); }
+    .placed.flow { background: rgba(220,252,231,.95); }
+    .placed.fid { background: rgba(243,232,255,.95); }
+    .placed.pid { background: rgba(254,243,199,.95); }
 
     .mini-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
       display: grid;
       place-items: center;
-      font-size: 1rem;
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid rgba(0, 0, 0, 0.08);
+      font-size: 1.15rem;
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(0,0,0,.08);
     }
 
     .bottom {
       display: grid;
-      grid-template-columns: 1.2fr 0.9fr;
+      grid-template-columns: 1.2fr .9fr;
       gap: 16px;
       padding: 18px 20px 22px;
       border-top: 1px solid #edf2f7;
       background: linear-gradient(180deg, #fbfdff, #f5f9fe);
     }
 
-    .tray,
-    .feedback-box {
+    .tray, .feedback-box {
       background: #fff;
       border: 1px solid var(--line);
       border-radius: 22px;
       padding: 16px;
-      box-shadow: 0 8px 18px rgba(12, 26, 46, 0.05);
+      box-shadow: 0 8px 18px rgba(12,26,46,.05);
     }
 
-    .tray h3,
-    .feedback-box h3 {
+    .tray h3, .feedback-box h3 {
       margin: 0 0 12px;
       color: #19304c;
       font-size: 1.06rem;
@@ -257,17 +248,17 @@
       background: linear-gradient(180deg, #fcfeff, #f1f7fc);
       cursor: grab;
       user-select: none;
-      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      transition: transform .12s ease, box-shadow .12s ease;
     }
 
     .sensor:hover {
       transform: translateY(-1px);
-      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+      box-shadow: 0 10px 20px rgba(15,23,42,.08);
     }
 
     .sensor.dragging {
-      opacity: 0.55;
-      transform: rotate(-2deg) scale(0.98);
+      opacity: .55;
+      transform: rotate(-2deg) scale(.98);
     }
 
     .icon {
@@ -277,18 +268,18 @@
       display: grid;
       place-items: center;
       font-size: 1.35rem;
-      border: 1px solid rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0,0,0,.08);
       flex: 0 0 auto;
     }
 
-    .temp .icon { background: rgba(239, 68, 68, 0.12); color: #dc2626; }
-    .pressure .icon { background: rgba(37, 99, 235, 0.12); color: #1d4ed8; }
-    .flow .icon { background: rgba(22, 163, 74, 0.12); color: #15803d; }
-    .fid .icon { background: rgba(168, 85, 247, 0.14); color: #7e22ce; }
-    .pid .icon { background: rgba(245, 158, 11, 0.14); color: #b45309; }
+    .temp .icon { background: rgba(239,68,68,.12); color: #dc2626; }
+    .pressure .icon { background: rgba(37,99,235,.12); color: #1d4ed8; }
+    .flow .icon { background: rgba(22,163,74,.12); color: #15803d; }
+    .fid .icon { background: rgba(168,85,247,.14); color: #7e22ce; }
+    .pid .icon { background: rgba(245,158,11,.14); color: #b45309; }
 
     .sensor .name {
-      font-size: 0.96rem;
+      font-size: .96rem;
       font-weight: 800;
       color: #1a304b;
       line-height: 1.2;
@@ -297,7 +288,7 @@
     .sensor .desc {
       margin-top: 4px;
       color: var(--muted);
-      font-size: 0.8rem;
+      font-size: .8rem;
       line-height: 1.3;
     }
 
@@ -305,7 +296,7 @@
       margin: 0;
       color: var(--muted);
       line-height: 1.5;
-      font-size: 0.94rem;
+      font-size: .94rem;
     }
 
     .controls {
@@ -319,55 +310,32 @@
       border: 0;
       border-radius: 14px;
       padding: 11px 14px;
-      font-size: 0.94rem;
+      font-size: .94rem;
       font-weight: 800;
       cursor: pointer;
-      transition: transform 0.12s ease;
+      transition: transform .12s ease;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-    }
-
-    .primary {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .secondary {
-      background: #e7eef7;
-      color: #19304c;
-    }
+    button:hover { transform: translateY(-1px); }
+    .primary { background: var(--accent); color: #fff; }
+    .secondary { background: #e7eef7; color: #19304c; }
 
     .footer-note {
       margin-top: 12px;
       color: #60728b;
-      font-size: 0.84rem;
+      font-size: .84rem;
       line-height: 1.45;
     }
 
     @media (max-width: 1200px) {
-      .bottom {
-        grid-template-columns: 1fr;
-      }
-
-      .inventory {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .bottom { grid-template-columns: 1fr; }
+      .inventory { grid-template-columns: repeat(2, 1fr); }
     }
 
     @media (max-width: 900px) {
-      .inventory {
-        grid-template-columns: 1fr;
-      }
-
-      .board-wrap {
-        overflow-x: auto;
-      }
-
-      .board {
-        width: 1365px;
-      }
+      .inventory { grid-template-columns: 1fr; }
+      .board-wrap { overflow-x: auto; }
+      .board { width: 1365px; }
     }
   </style>
 </head>
@@ -375,67 +343,47 @@
   <div class="page">
     <section class="header">
       <h1 class="title">Interactive Learning Game</h1>
-      <p class="subtitle">
-        Locate the core internal components in an online gas chromatograph:
-        temperature sensor, pressure sensor, flow sensor, FID detector, and PID detector.
-      </p>
+      <p class="subtitle">Locate the core internal components in an online gas chromatograph: temperature sensor, pressure sensor, flow sensor, FID detector, and PID detector.</p>
     </section>
 
     <section class="game-card">
       <div class="topbar">
         <div class="topbar-left">
           <h2>Online GC Core Placement Challenge</h2>
-          <p>
-            Place the five critical elements in the most logical locations inside the GC:
-            pressure, flow, temperature, FID, and PID.
-          </p>
+          <p>Place the five critical elements in the most logical locations inside the GC: pressure, flow, temperature, FID, and PID.</p>
         </div>
         <div class="stats">
-          <div class="stat">
-            <div class="value" id="scoreValue">0/5</div>
-            <div class="label">Correct</div>
-          </div>
-          <div class="stat">
-            <div class="value" id="triesValue">0</div>
-            <div class="label">Tries</div>
-          </div>
-          <div class="stat">
-            <div class="value" id="hintValue">3</div>
-            <div class="label">Hints</div>
-          </div>
+          <div class="stat"><div class="value" id="scoreValue">0/5</div><div class="label">Correct</div></div>
+          <div class="stat"><div class="value" id="triesValue">0</div><div class="label">Tries</div></div>
+          <div class="stat"><div class="value" id="hintValue">3</div><div class="label">Hints</div></div>
         </div>
       </div>
 
       <div class="board-wrap">
         <div class="board">
-          <!-- Temperature zone: lower left under laptop area -->
-          <div class="dropzone" id="zone-temperature" data-accept="temperature"
-               style="left:1.8%; top:69.8%; width:14.0%; height:11.3%;">
-            <div class="zone-label">Temperature</div>
+          <!-- temperature / heated zone -->
+          <div class="dropzone" id="zone-temperature" data-accept="temperature" style="left:6.7%; top:53.8%; width:25.8%; height:14.0%;">
+            <div class="zone-label">Temperature-controlled section</div>
           </div>
 
-          <!-- Pressure zone: lower middle-left inside cabinet -->
-          <div class="dropzone" id="zone-pressure" data-accept="pressure"
-               style="left:29.4%; top:56.0%; width:18.3%; height:8.8%;">
-            <div class="zone-label">Pressure</div>
+          <!-- pressure section -->
+          <div class="dropzone" id="zone-pressure" data-accept="pressure" style="left:28.9%; top:63.2%; width:18.2%; height:12.0%;">
+            <div class="zone-label">Pressure section</div>
           </div>
 
-          <!-- Flow zone: around heated flow/loop section -->
-          <div class="dropzone" id="zone-flow" data-accept="flow"
-               style="left:64.0%; top:67.0%; width:18.0%; height:10.8%;">
-            <div class="zone-label">Flow</div>
+          <!-- flow section -->
+          <div class="dropzone" id="zone-flow" data-accept="flow" style="left:61.0%; top:52.0%; width:17.7%; height:14.5%;">
+            <div class="zone-label">Flow section</div>
           </div>
 
-          <!-- FID zone: upper right detector canister -->
-          <div class="dropzone" id="zone-fid" data-accept="fid"
-               style="left:88.0%; top:64.2%; width:11.6%; height:8.2%;">
-            <div class="zone-label">FID</div>
+          <!-- FID detector -->
+          <div class="dropzone" id="zone-fid" data-accept="fid" style="left:80.6%; top:52.0%; width:15.5%; height:12.8%;">
+            <div class="zone-label">FID detector</div>
           </div>
 
-          <!-- PID zone: lower right detector zone -->
-          <div class="dropzone" id="zone-pid" data-accept="pid"
-               style="left:88.0%; top:78.2%; width:11.6%; height:7.8%;">
-            <div class="zone-label">PID</div>
+          <!-- PID detector -->
+          <div class="dropzone" id="zone-pid" data-accept="pid" style="left:80.8%; top:67.0%; width:15.3%; height:11.6%;">
+            <div class="zone-label">PID detector</div>
           </div>
         </div>
       </div>
@@ -444,17 +392,12 @@
         <div class="tray">
           <h3>Components to place</h3>
           <div class="inventory" id="inventory"></div>
-          <div class="footer-note">
-            Dropped locations show icon only, without names, for a cleaner professional look.
-          </div>
+          <div class="footer-note">Dropped locations now show icon only, without names, for a cleaner professional look.</div>
         </div>
 
         <div class="feedback-box">
           <h3>Feedback and controls</h3>
-          <p id="feedbackText">
-            Start with the process logic: pressure near regulation, flow in the metered carrier path,
-            temperature in the heated section, and the two detector types at the outlet analysis end.
-          </p>
+          <p id="feedbackText">Start with the process logic: pressure near regulation, flow in the metered carrier path, temperature in the heated section, and the two detector types at the outlet analysis end.</p>
           <div class="controls">
             <button class="primary" id="checkBtn">Check Progress</button>
             <button class="secondary" id="hintBtn">Use Hint</button>
@@ -575,9 +518,7 @@
         zone.classList.add('over');
       });
 
-      zone.addEventListener('dragleave', () => {
-        zone.classList.remove('over');
-      });
+      zone.addEventListener('dragleave', () => zone.classList.remove('over'));
 
       zone.addEventListener('drop', e => {
         e.preventDefault();
@@ -590,11 +531,8 @@
 
         if (sensorType === accepted) {
           zones.forEach(z => {
-            if (z.dataset.placed === sensorType && z !== zone) {
-              resetZone(z);
-            }
+            if (z.dataset.placed === sensorType && z !== zone) resetZone(z);
           });
-
           zone.dataset.placed = sensorType;
           zone.classList.add('correct');
           zone.innerHTML = makePlacedMarkup(sensorType);
@@ -619,10 +557,7 @@
     }
 
     checkBtn.addEventListener('click', () => {
-      const missing = Array.from(zones)
-        .filter(z => !z.classList.contains('correct'))
-        .map(z => z.dataset.accept);
-
+      const missing = Array.from(zones).filter(z => !z.classList.contains('correct')).map(z => z.dataset.accept);
       if (!missing.length) {
         feedbackText.innerHTML = '<strong>All correct.</strong> This GC training layout is complete.';
       } else {
@@ -635,9 +570,7 @@
         feedbackText.textContent = 'No hints left. Think process flow from inlet to output.';
         return;
       }
-
       hints -= 1;
-
       const next = Array.from(zones).find(z => !z.classList.contains('correct'));
       if (!next) {
         feedbackText.textContent = 'You already solved the full game.';
@@ -646,17 +579,11 @@
       }
 
       const accepted = next.dataset.accept;
-      if (accepted === 'pressure') {
-        feedbackText.textContent = 'Hint: pressure belongs near the regulator area.';
-      } else if (accepted === 'flow') {
-        feedbackText.textContent = 'Hint: flow belongs in the metered carrier / flow path.';
-      } else if (accepted === 'temperature') {
-        feedbackText.textContent = 'Hint: temperature belongs where heating is controlled.';
-      } else if (accepted === 'fid') {
-        feedbackText.textContent = 'Hint: FID is one of the detector modules on the outlet side.';
-      } else if (accepted === 'pid') {
-        feedbackText.textContent = 'Hint: PID is the second detector module on the outlet side.';
-      }
+      if (accepted === 'pressure') feedbackText.textContent = 'Hint: pressure belongs near the regulator area.';
+      else if (accepted === 'flow') feedbackText.textContent = 'Hint: flow belongs in the metered carrier / flow path.';
+      else if (accepted === 'temperature') feedbackText.textContent = 'Hint: temperature belongs where heating is controlled.';
+      else if (accepted === 'fid') feedbackText.textContent = 'Hint: FID is one of the detector modules on the outlet side.';
+      else if (accepted === 'pid') feedbackText.textContent = 'Hint: PID is the second detector module on the outlet side.';
 
       updateStats();
     });
