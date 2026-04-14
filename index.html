@@ -3,19 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Online GC Sensor and Detector Drag-and-Drop Game</title>
+  <title>GC Analyzer Drag-and-Drop Game — Level 2 Enhanced</title>
   <style>
     :root {
-      --bg: #0b1220;
-      --panel: #ffffff;
-      --text: #17263d;
-      --muted: #5b6d85;
-      --line: #d9e4ef;
-      --accent: #2563eb;
-      --ok: #16a34a;
-      --warn: #d97706;
+      --bg: #eef2f7;
+      --panel: #0f172a;
+      --panel-2: #1e293b;
+      --card: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --ok: #15803d;
       --bad: #dc2626;
-      --shadow: 0 16px 36px rgba(12, 24, 40, 0.16);
+      --accent: #2563eb;
+      --gold: #d97706;
+      --shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+      --radius: 18px;
     }
 
     * { box-sizing: border-box; }
@@ -23,588 +25,567 @@
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(180deg, #09111d, #0f172a);
-      color: #e8eef8;
+      background: var(--bg);
+      color: #111827;
     }
 
-    .page {
-      width: min(1480px, 96vw);
-      margin: 18px auto 28px;
+    .app {
       display: grid;
-      gap: 16px;
+      grid-template-columns: 340px 1fr;
+      min-height: 100vh;
     }
 
-    .header {
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 24px;
-      padding: 20px 24px;
-      box-shadow: 0 12px 28px rgba(0,0,0,.18);
-    }
-
-    .title {
-      margin: 0 0 8px;
-      font-size: 2.1rem;
-      font-weight: 800;
-      line-height: 1.05;
-    }
-
-    .subtitle {
-      margin: 0;
-      color: #c6d3e4;
-      font-size: 1.02rem;
-      line-height: 1.45;
-    }
-
-    .game-card {
-      background: var(--panel);
+    .sidebar {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
       color: var(--text);
-      border-radius: 28px;
+      padding: 20px;
       box-shadow: var(--shadow);
-      overflow: hidden;
-      border: 1px solid rgba(15,23,42,.06);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
     }
 
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      align-items: center;
-      padding: 16px 20px;
-      border-bottom: 1px solid #edf2f7;
-      background: linear-gradient(180deg, #fbfdff, #f5f9fe);
+    .sidebar h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
     }
 
-    .topbar-left h2 {
-      margin: 0 0 4px;
-      font-size: 1.45rem;
-      color: #1b2b44;
-    }
-
-    .topbar-left p {
-      margin: 0;
+    .sidebar p {
+      margin: 0 0 14px;
       color: var(--muted);
-      font-size: .96rem;
       line-height: 1.45;
     }
 
     .stats {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
-      flex-wrap: wrap;
+      margin: 18px 0 12px;
+    }
+
+    .stats-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
     }
 
     .stat {
-      min-width: 98px;
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 10px 12px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 12px;
       text-align: center;
     }
 
-    .stat .value {
-      font-weight: 800;
-      font-size: 1.15rem;
-      color: #18304c;
-    }
-
     .stat .label {
-      margin-top: 2px;
+      display: block;
+      font-size: 12px;
       color: var(--muted);
-      font-size: .78rem;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
-    .board-wrap {
-      padding: 18px;
-      background: #f6fafe;
+    .stat .value {
+      font-size: 22px;
+      font-weight: 700;
     }
 
-    .board {
-      position: relative;
-      width: 100%;
-      max-width: 1365px;
-      margin: 0 auto;
-      aspect-ratio: 1365 / 768;
-      background: #e9f3fb url('gc-cover-banner.png') center/contain no-repeat;
-      border-radius: 22px;
-      overflow: hidden;
-      border: 1px solid #dbe6f0;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.4);
+    .tray-title {
+      margin: 22px 0 10px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #f8fafc;
     }
 
-.dropzone {
-  position: absolute;
-  border: 3px dashed #89a3bf;
-  border-radius: 18px;
-  background: rgba(255,255,255,.18);
-  backdrop-filter: blur(1px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 8px;
-  transition: transform .12s ease, border-color .12s ease, background .12s ease, box-shadow .12s ease;
-  z-index: 5;
-}
-
-    .dropzone.over {
-      transform: scale(1.02);
-      border-color: var(--warn);
-      background: rgba(255,248,220,.6);
-      box-shadow: 0 10px 18px rgba(217,119,6,.16);
-    }
-
-    .dropzone.correct {
-      border-color: var(--ok);
-      background: rgba(236,253,243,.7);
-    }
-
-    .dropzone.incorrect {
-      border-color: var(--bad);
-      background: rgba(254,242,242,.76);
-      animation: shake .22s linear 2;
-    }
-
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      25% { transform: translateX(-3px); }
-      75% { transform: translateX(3px); }
-    }
-
-    .zone-label {
-      font-weight: 800;
-      font-size: 1rem;
-      color: #2f4a67;
-      line-height: 1.25;
-      text-shadow: 0 1px 0 rgba(255,255,255,.55);
-    }
-
-    .placed {
-      width: 100%;
-      height: 100%;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255,255,255,.86);
-      border: 1px solid rgba(0,0,0,.08);
-    }
-
-    .placed.temp { background: rgba(254,226,226,.95); }
-    .placed.pressure { background: rgba(219,234,254,.95); }
-    .placed.flow { background: rgba(220,252,231,.95); }
-    .placed.fid { background: rgba(243,232,255,.95); }
-    .placed.pid { background: rgba(254,243,199,.95); }
-
-    .mini-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
+    .tray {
       display: grid;
-      place-items: center;
-      font-size: 1.15rem;
-      background: rgba(255,255,255,.92);
-      border: 1px solid rgba(0,0,0,.08);
-    }
-
-    .bottom {
-      display: grid;
-      grid-template-columns: 1.2fr .9fr;
-      gap: 16px;
-      padding: 18px 20px 22px;
-      border-top: 1px solid #edf2f7;
-      background: linear-gradient(180deg, #fbfdff, #f5f9fe);
-    }
-
-    .tray, .feedback-box {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      padding: 16px;
-      box-shadow: 0 8px 18px rgba(12,26,46,.05);
-    }
-
-    .tray h3, .feedback-box h3 {
-      margin: 0 0 12px;
-      color: #19304c;
-      font-size: 1.06rem;
-    }
-
-    .inventory {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
-    }
-
-    .sensor {
-      display: flex;
-      align-items: center;
       gap: 10px;
-      min-height: 86px;
-      padding: 12px;
-      border-radius: 18px;
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, #fcfeff, #f1f7fc);
+    }
+
+    .item {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: white;
+      padding: 12px 14px;
+      border-radius: 14px;
       cursor: grab;
       user-select: none;
-      transition: transform .12s ease, box-shadow .12s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+      font-weight: 700;
     }
 
-    .sensor:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 20px rgba(15,23,42,.08);
-    }
-
-    .sensor.dragging {
-      opacity: .55;
-      transform: rotate(-2deg) scale(.98);
+    .item small {
+      display: block;
+      margin-top: 4px;
+      color: #cbd5e1;
+      font-weight: 400;
     }
 
     .icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      font-size: 1.35rem;
-      border: 1px solid rgba(0,0,0,.08);
-      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      margin-right: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      font-size: 16px;
+      vertical-align: middle;
     }
 
-    .temp .icon { background: rgba(239,68,68,.12); color: #dc2626; }
-    .pressure .icon { background: rgba(37,99,235,.12); color: #1d4ed8; }
-    .flow .icon { background: rgba(22,163,74,.12); color: #15803d; }
-    .fid .icon { background: rgba(168,85,247,.14); color: #7e22ce; }
-    .pid .icon { background: rgba(245,158,11,.14); color: #b45309; }
-
-    .sensor .name {
-      font-size: .96rem;
-      font-weight: 800;
-      color: #1a304b;
-      line-height: 1.2;
-    }
-
-    .sensor .desc {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: .8rem;
-      line-height: 1.3;
-    }
-
-    .feedback-box p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.5;
-      font-size: .94rem;
+    .item:hover { transform: translateY(-1px); }
+    .item.dragging { opacity: 0.5; }
+    .item.used {
+      opacity: 0.35;
+      cursor: not-allowed;
     }
 
     .controls {
       display: flex;
       gap: 10px;
+      margin-top: 18px;
       flex-wrap: wrap;
-      margin-top: 14px;
     }
 
     button {
       border: 0;
-      border-radius: 14px;
-      padding: 11px 14px;
-      font-size: .94rem;
-      font-weight: 800;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 700;
       cursor: pointer;
-      transition: transform .12s ease;
     }
 
-    button:hover { transform: translateY(-1px); }
-    .primary { background: var(--accent); color: #fff; }
-    .secondary { background: #e7eef7; color: #19304c; }
-
-    .footer-note {
-      margin-top: 12px;
-      color: #60728b;
-      font-size: .84rem;
-      line-height: 1.45;
+    .btn-primary {
+      background: var(--accent);
+      color: white;
     }
 
-    @media (max-width: 1200px) {
-      .bottom { grid-template-columns: 1fr; }
-      .inventory { grid-template-columns: repeat(2, 1fr); }
+    .btn-secondary {
+      background: rgba(255,255,255,0.12);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
-    @media (max-width: 900px) {
-      .inventory { grid-template-columns: 1fr; }
-      .board-wrap { overflow-x: auto; }
-      .board { width: 1365px; }
+    .legend {
+      margin-top: 18px;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.07);
+      color: #dbeafe;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .main {
+      padding: 20px;
+      overflow: auto;
+    }
+
+    .board-wrap {
+      background: white;
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      min-width: 1120px;
+    }
+
+    .board-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .board-header h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .board-header p {
+      margin: 4px 0 0;
+      color: #475569;
+    }
+
+    .message {
+      min-height: 24px;
+      font-weight: 700;
+    }
+
+    .message.ok { color: var(--ok); }
+    .message.bad { color: var(--bad); }
+    .message.win { color: var(--gold); }
+
+    .diagram-area {
+      position: relative;
+      display: inline-block;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #f8fafc;
+    }
+
+    .diagram {
+      display: block;
+      width: 1100px;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .drop-zone {
+      position: absolute;
+      border: 2px dashed rgba(37, 99, 235, 0.15);
+      border-radius: 12px;
+      background: rgba(37, 99, 235, 0.05);
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4px;
+      overflow: hidden;
+    }
+
+    .drop-zone.show-hints::after {
+      content: attr(data-label);
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(15,23,42,0.45);
+      line-height: 1.1;
+      white-space: pre-line;
+      pointer-events: none;
+    }
+
+    .drop-zone.over {
+      border-color: rgba(37, 99, 235, 0.7);
+      background: rgba(37, 99, 235, 0.12);
+    }
+
+    .drop-zone.correct {
+      border-color: rgba(21, 128, 61, 0.75);
+      background: rgba(21, 128, 61, 0.16);
+    }
+
+    .drop-zone.wrong {
+      border-color: rgba(220, 38, 38, 0.75);
+      background: rgba(220, 38, 38, 0.14);
+    }
+
+    .drop-zone.filled {
+      border-style: solid;
+    }
+
+    .placed-tag {
+      font-size: 12px;
+      font-weight: 800;
+      color: #0f172a;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(15,23,42,0.15);
+      padding: 5px 8px;
+      border-radius: 999px;
+      box-shadow: 0 6px 12px rgba(15,23,42,0.12);
+    }
+
+    .explain-panel {
+      margin-top: 18px;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 16px;
+      background: #f8fafc;
+    }
+
+    .explain-panel h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .explain-title {
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+
+    .explain-text {
+      color: #334155;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1100px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        height: auto;
+        position: relative;
+      }
+      .board-wrap {
+        min-width: auto;
+      }
+      .diagram {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="page">
-    <section class="header">
-      <h1 class="title">Interactive Learning Game</h1>
-      <p class="subtitle">Locate the core internal components in an online gas chromatograph: temperature sensor, pressure sensor, flow sensor, FID detector, and PID detector.</p>
-    </section>
+  <div class="app">
+    <aside class="sidebar">
+      <h1>GC Game — Level 2</h1>
+      <p>Drag each item onto the correct place in the GC schematic. This version adds a timer, best score, and short engineering explanations for each correct placement.</p>
 
-    <section class="game-card">
-      <div class="topbar">
-        <div class="topbar-left">
-          <h2>Online GC Core Placement Challenge</h2>
-          <p>Place the five critical elements in the most logical locations inside the GC: pressure, flow, temperature, FID, and PID.</p>
+      <div class="stats">
+        <div class="stat">
+          <span class="label">Score</span>
+          <span class="value" id="score">0</span>
         </div>
-        <div class="stats">
-          <div class="stat"><div class="value" id="scoreValue">0/5</div><div class="label">Correct</div></div>
-          <div class="stat"><div class="value" id="triesValue">0</div><div class="label">Tries</div></div>
-          <div class="stat"><div class="value" id="hintValue">3</div><div class="label">Hints</div></div>
+        <div class="stat">
+          <span class="label">Remaining</span>
+          <span class="value" id="remaining">14</span>
         </div>
       </div>
 
+      <div class="stats-2">
+        <div class="stat">
+          <span class="label">Timer</span>
+          <span class="value" id="timer">00:00</span>
+        </div>
+        <div class="stat">
+          <span class="label">Best Time</span>
+          <span class="value" id="bestTime">--:--</span>
+        </div>
+      </div>
+
+      <div class="tray-title">Drag items</div>
+      <div class="tray" id="tray">
+        <div class="item" draggable="true" data-type="temperature" data-name="Temperature Sensor (TT)"><span class="icon">🌡</span>Temperature Sensor (TT)<small>Oven and detector temperature points</small></div>
+        <div class="item" draggable="true" data-type="pressure" data-name="Pressure Sensor (PT)"><span class="icon">🧭</span>Pressure Sensor (PT)<small>Sample and carrier pressure points</small></div>
+        <div class="item" draggable="true" data-type="flow" data-name="Flow Sensor (FT)"><span class="icon">💨</span>Flow Sensor (FT)<small>Sample and carrier flow points</small></div>
+        <div class="item" draggable="true" data-type="detector" data-name="Detector (DT)"><span class="icon">📡</span>Detector (DT)<small>Main detector assembly</small></div>
+        <div class="item" draggable="true" data-type="valve" data-name="Valve"><span class="icon">🔀</span>Valve<small>Vent, calibration, and local process valves</small></div>
+        <div class="item" draggable="true" data-type="column" data-name="Column"><span class="icon">🧪</span>Column<small>Pre-column and main column</small></div>
+        <div class="item" draggable="true" data-type="selector" data-name="Sample Selector"><span class="icon">🎛</span>Sample Selector<small>Rotary selector / switching valve</small></div>
+        <div class="item" draggable="true" data-type="oven" data-name="GC Oven"><span class="icon">♨</span>GC Oven<small>Main enclosure around internal components</small></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn-primary" id="resetBtn">Reset</button>
+        <button class="btn-secondary" id="hintBtn">Toggle Hints</button>
+      </div>
+
+      <div class="legend">
+        <strong>Level 2 targets:</strong><br>
+        2× temperature, 2× pressure, 2× flow, 1× detector, 3× valves, 2× columns, 1× sample selector, 1× GC oven.
+      </div>
+    </aside>
+
+    <main class="main">
       <div class="board-wrap">
-        <div class="board">
-<!-- temperature / heated zone -->
-<div class="dropzone" id="zone-temperature" data-accept="temperature"
-     style="left:1.5%; top:41.5%; width:28.0%; height:17.0%;">
-  <div class="zone-label">Temperature-controlled section</div>
-</div>
-
-<!-- pressure section -->
-<div class="dropzone" id="zone-pressure" data-accept="pressure"
-     style="left:27.5%; top:53.5%; width:20.5%; height:14.0%;">
-  <div class="zone-label">Pressure section</div>
-</div>
-
-<!-- flow section -->
-<div class="dropzone" id="zone-flow" data-accept="flow"
-     style="left:56.5%; top:39.5%; width:22.0%; height:17.5%;">
-  <div class="zone-label">Flow section</div>
-</div>
-
-<!-- FID detector -->
-<div class="dropzone" id="zone-fid" data-accept="fid"
-     style="left:82.0%; top:39.5%; width:17.5%; height:15.5%;">
-  <div class="zone-label">FID detector</div>
-</div>
-
-<!-- PID detector -->
-<div class="dropzone" id="zone-pid" data-accept="pid"
-     style="left:84.0%; top:59.5%; width:15.5%; height:12.5%;">
-  <div class="zone-label">PID detector</div>
-</div>
-        </div>
-      </div>
-
-      <div class="bottom">
-        <div class="tray">
-          <h3>Components to place</h3>
-          <div class="inventory" id="inventory"></div>
-          <div class="footer-note">Dropped locations now show icon only, without names, for a cleaner professional look.</div>
-        </div>
-
-        <div class="feedback-box">
-          <h3>Feedback and controls</h3>
-          <p id="feedbackText">Start with the process logic: pressure near regulation, flow in the metered carrier path, temperature in the heated section, and the two detector types at the outlet analysis end.</p>
-          <div class="controls">
-            <button class="primary" id="checkBtn">Check Progress</button>
-            <button class="secondary" id="hintBtn">Use Hint</button>
-            <button class="secondary" id="resetBtn">Reset Game</button>
+        <div class="board-header">
+          <div>
+            <h2>Process Gas Chromatograph Training Board</h2>
+            <p>Place the major instrument groups on the engineering schematic.</p>
           </div>
+          <div class="message" id="message">Place all 14 targets correctly.</div>
+        </div>
+
+        <div class="diagram-area" id="diagramArea">
+          <img class="diagram" src="/mnt/data/9a898c20-1bab-4b60-9fcb-1c3566b89e29.png" alt="GC analyzer schematic" />
+
+          <div class="drop-zone" data-accept="oven" data-label="GC OVEN" data-explanation="The GC oven is the controlled thermal enclosure that houses the separation components and keeps the analytical path at stable operating conditions." style="left: 350px; top: 72px; width: 560px; height: 500px;"></div>
+
+          <div class="drop-zone" data-accept="temperature" data-label="TT-101&#10;OVEN TEMP" data-explanation="This temperature point monitors the oven temperature, which is critical for repeatable chromatographic separation and retention time stability." style="left: 438px; top: 118px; width: 138px; height: 44px;"></div>
+          <div class="drop-zone" data-accept="temperature" data-label="TT-102&#10;DETECTOR TEMP" data-explanation="This temperature point monitors the detector area, helping maintain detector performance, response stability, and proper operating conditions." style="left: 518px; top: 470px; width: 145px; height: 64px;"></div>
+
+          <div class="drop-zone" data-accept="pressure" data-label="PT-101&#10;SAMPLE PRESSURE" data-explanation="The sample pressure point confirms that the incoming process sample is regulated properly before it enters the analytical path." style="left: 254px; top: 196px; width: 134px; height: 58px;"></div>
+          <div class="drop-zone" data-accept="pressure" data-label="PT-102&#10;CARRIER PRESSURE" data-explanation="The carrier gas pressure point ensures the carrier supply is stable, which is essential for accurate flow control and reliable separation." style="left: 220px; top: 666px; width: 138px; height: 58px;"></div>
+
+          <div class="drop-zone" data-accept="flow" data-label="FT-101&#10;SAMPLE FLOW" data-explanation="The sample flow point verifies that the process sample is moving at the intended rate into the analyzer system." style="left: 226px; top: 308px; width: 142px; height: 58px;"></div>
+          <div class="drop-zone" data-accept="flow" data-label="FT-102&#10;CARRIER FLOW" data-explanation="The carrier flow point confirms the carrier gas flow rate, one of the most important variables affecting separation quality and detector response." style="left: 186px; top: 736px; width: 152px; height: 58px;"></div>
+
+          <div class="drop-zone" data-accept="detector" data-label="DT-101&#10;DETECTOR" data-explanation="The detector converts the separated components into a measurable signal, making it the final analytical sensing element in the GC path." style="left: 735px; top: 390px; width: 180px; height: 130px;"></div>
+
+          <div class="drop-zone" data-accept="valve" data-label="V-201&#10;VENT VALVE" data-explanation="The vent valve routes gas to vent when required, supporting purge, isolation, and safe operating sequences." style="left: 928px; top: 120px; width: 90px; height: 70px;"></div>
+          <div class="drop-zone" data-accept="valve" data-label="V-202&#10;CAL GAS VALVE" data-explanation="The calibration gas valve admits reference gas into the analyzer so the GC can be checked and calibrated against known compositions." style="left: 930px; top: 198px; width: 88px; height: 72px;"></div>
+          <div class="drop-zone" data-accept="valve" data-label="LOCAL&#10;VALVE" data-explanation="This local valve supports routing or isolation near the lower internal linework and detector temperature section." style="left: 505px; top: 455px; width: 90px; height: 58px;"></div>
+
+          <div class="drop-zone" data-accept="column" data-label="PRE-COLUMN" data-explanation="The pre-column performs an initial conditioning or separation step before the sample proceeds to the main analytical column." style="left: 487px; top: 246px; width: 160px; height: 48px;"></div>
+          <div class="drop-zone" data-accept="column" data-label="MAIN COLUMN" data-explanation="The main column performs the core chromatographic separation, allowing the detector to distinguish components as they elute." style="left: 487px; top: 328px; width: 168px; height: 50px;"></div>
+
+          <div class="drop-zone" data-accept="selector" data-label="SAMPLE&#10;SELECTOR" data-explanation="The sample selector switches among sample paths or directs the stream into the correct analytical route within the system." style="left: 206px; top: 430px; width: 164px; height: 118px;"></div>
+        </div>
+
+        <div class="explain-panel">
+          <h3>Engineering note</h3>
+          <div class="explain-title" id="explainTitle">Awaiting placement</div>
+          <div class="explain-text" id="explainText">When you place an item correctly, a short explanation will appear here.</div>
         </div>
       </div>
-    </section>
+    </main>
   </div>
 
   <script>
-    const inventory = document.getElementById('inventory');
-    const zones = document.querySelectorAll('.dropzone');
-    const feedbackText = document.getElementById('feedbackText');
-    const scoreValue = document.getElementById('scoreValue');
-    const triesValue = document.getElementById('triesValue');
-    const hintValue = document.getElementById('hintValue');
-    const checkBtn = document.getElementById('checkBtn');
-    const hintBtn = document.getElementById('hintBtn');
+    const items = Array.from(document.querySelectorAll('.item'));
+    const zones = Array.from(document.querySelectorAll('.drop-zone'));
+    const scoreEl = document.getElementById('score');
+    const remainingEl = document.getElementById('remaining');
+    const timerEl = document.getElementById('timer');
+    const bestTimeEl = document.getElementById('bestTime');
+    const messageEl = document.getElementById('message');
+    const explainTitleEl = document.getElementById('explainTitle');
+    const explainTextEl = document.getElementById('explainText');
     const resetBtn = document.getElementById('resetBtn');
+    const hintBtn = document.getElementById('hintBtn');
 
     let dragged = null;
-    let tries = 0;
-    let hints = 3;
+    let score = 0;
+    let hintsOn = false;
+    const totalTargets = zones.length;
+    let startTime = null;
+    let timerInterval = null;
+    const BEST_KEY = 'gc_level2_best_time';
 
-    const sensorMeta = {
-      temperature: {
-        label: 'Temperature Sensor',
-        icon: '🌡',
-        className: 'temp',
-        desc: 'For heated sections, oven, or temperature-critical conditioning.',
-        success: 'Correct. The temperature sensor belongs in the heated / temperature-controlled section.'
-      },
-      pressure: {
-        label: 'Pressure Sensor',
-        icon: '⏲',
-        className: 'pressure',
-        desc: 'For pressure regulation and stable sample delivery.',
-        success: 'Correct. The pressure sensor belongs near the pressure regulator section.'
-      },
-      flow: {
-        label: 'Flow Sensor',
-        icon: '💨',
-        className: 'flow',
-        desc: 'For controlled carrier or sample flow path.',
-        success: 'Correct. The flow sensor belongs in the metered flow / carrier control path.'
-      },
-      fid: {
-        label: 'FID Detector',
-        icon: '🔥',
-        className: 'fid',
-        desc: 'Flame Ionization Detector placement.',
-        success: 'Correct. The FID belongs at the detector outlet section.'
-      },
-      pid: {
-        label: 'PID Detector',
-        icon: '💡',
-        className: 'pid',
-        desc: 'Photoionization Detector placement.',
-        success: 'Correct. The PID belongs at the detector outlet section.'
+    function formatTime(totalSeconds) {
+      const mins = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+      const secs = String(totalSeconds % 60).padStart(2, '0');
+      return `${mins}:${secs}`;
+    }
+
+    function startTimerIfNeeded() {
+      if (startTime !== null) return;
+      startTime = Date.now();
+      timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        timerEl.textContent = formatTime(elapsed);
+      }, 250);
+    }
+
+    function stopTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    function loadBestTime() {
+      const stored = localStorage.getItem(BEST_KEY);
+      if (stored) bestTimeEl.textContent = formatTime(Number(stored));
+    }
+
+    function saveBestTime(seconds) {
+      const current = localStorage.getItem(BEST_KEY);
+      if (current === null || seconds < Number(current)) {
+        localStorage.setItem(BEST_KEY, String(seconds));
+        bestTimeEl.textContent = formatTime(seconds);
+        return true;
       }
-    };
-
-    function inventoryMarkup() {
-      return Object.entries(sensorMeta).map(([key, meta]) => `
-        <div class="sensor ${meta.className}" draggable="true" data-sensor="${key}">
-          <div class="icon">${meta.icon}</div>
-          <div>
-            <div class="name">${meta.label}</div>
-            <div class="desc">${meta.desc}</div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function makePlacedMarkup(sensorType) {
-      const meta = sensorMeta[sensorType];
-      return `
-        <div class="placed ${meta.className}">
-          <div class="mini-icon">${meta.icon}</div>
-        </div>
-      `;
-    }
-
-    function attachDraggables() {
-      document.querySelectorAll('.sensor').forEach(sensor => {
-        sensor.addEventListener('dragstart', e => {
-          dragged = sensor;
-          sensor.classList.add('dragging');
-          e.dataTransfer.setData('text/plain', sensor.dataset.sensor);
-        });
-
-        sensor.addEventListener('dragend', () => {
-          sensor.classList.remove('dragging');
-          dragged = null;
-        });
-      });
+      bestTimeEl.textContent = formatTime(Number(current));
+      return false;
     }
 
     function updateStats() {
-      const correct = document.querySelectorAll('.dropzone.correct').length;
-      scoreValue.textContent = `${correct}/5`;
-      triesValue.textContent = String(tries);
-      hintValue.textContent = String(hints);
+      scoreEl.textContent = score;
+      remainingEl.textContent = totalTargets - score;
+      if (score === totalTargets) {
+        stopTimer();
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const isBest = saveBestTime(elapsed);
+        messageEl.textContent = isBest ? `Excellent — completed in ${formatTime(elapsed)}. New best time.` : `Excellent — completed in ${formatTime(elapsed)}.`;
+        messageEl.className = 'message win';
+      }
     }
 
-    function resetZone(zone) {
-      zone.classList.remove('correct', 'incorrect', 'over');
-      zone.dataset.placed = '';
-      zone.innerHTML = `<div class="zone-label">${zone.dataset.original}</div>`;
+    function setMessage(text, type = '') {
+      if (score === totalTargets && type !== 'reset') return;
+      messageEl.textContent = text;
+      messageEl.className = `message ${type}`.trim();
     }
+
+    function setExplanation(title, text) {
+      explainTitleEl.textContent = title;
+      explainTextEl.textContent = text;
+    }
+
+    items.forEach(item => {
+      item.addEventListener('dragstart', () => {
+        if (item.classList.contains('used')) return;
+        startTimerIfNeeded();
+        dragged = item;
+        item.classList.add('dragging');
+      });
+      item.addEventListener('dragend', () => {
+        item.classList.remove('dragging');
+      });
+    });
 
     zones.forEach(zone => {
-      zone.dataset.original = zone.textContent.trim();
-
       zone.addEventListener('dragover', e => {
+        if (!dragged || zone.dataset.locked === 'true') return;
         e.preventDefault();
         zone.classList.add('over');
       });
 
-      zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+      zone.addEventListener('dragleave', () => {
+        zone.classList.remove('over');
+      });
 
       zone.addEventListener('drop', e => {
         e.preventDefault();
         zone.classList.remove('over');
-        if (!dragged) return;
+        if (!dragged || zone.dataset.locked === 'true') return;
 
-        const sensorType = dragged.dataset.sensor;
+        const draggedType = dragged.dataset.type;
         const accepted = zone.dataset.accept;
-        tries += 1;
 
-        if (sensorType === accepted) {
-          zones.forEach(z => {
-            if (z.dataset.placed === sensorType && z !== zone) resetZone(z);
-          });
-          zone.dataset.placed = sensorType;
-          zone.classList.add('correct');
-          zone.innerHTML = makePlacedMarkup(sensorType);
-          dragged.remove();
-          feedbackText.textContent = sensorMeta[sensorType].success;
+        if (draggedType === accepted) {
+          zone.dataset.locked = 'true';
+          zone.classList.remove('wrong');
+          zone.classList.add('correct', 'filled');
+          zone.innerHTML = `<span class="placed-tag">${dragged.dataset.name}</span>`;
+          dragged.classList.add('used');
+          dragged.setAttribute('draggable', 'false');
+          score += 1;
+          setMessage(`Correct: ${dragged.dataset.name}`, 'ok');
+          setExplanation(zone.dataset.label.replace(/&#10;/g, ' '), zone.dataset.explanation);
+          updateStats();
         } else {
-          zone.classList.add('incorrect');
-          feedbackText.textContent = `Not quite. ${sensorMeta[sensorType].label} does not belong there.`;
-          setTimeout(() => zone.classList.remove('incorrect'), 700);
+          zone.classList.add('wrong');
+          setMessage(`Not quite. That target expects ${accepted}.`, 'bad');
+          setTimeout(() => zone.classList.remove('wrong'), 700);
         }
-
-        updateStats();
-        checkForWin();
       });
     });
 
-    function checkForWin() {
-      const correct = document.querySelectorAll('.dropzone.correct').length;
-      if (correct === 5) {
-        feedbackText.innerHTML = '<strong>Excellent.</strong> You placed all five core GC elements correctly: temperature, pressure, flow, FID, and PID.';
-      }
-    }
-
-    checkBtn.addEventListener('click', () => {
-      const missing = Array.from(zones).filter(z => !z.classList.contains('correct')).map(z => z.dataset.accept);
-      if (!missing.length) {
-        feedbackText.innerHTML = '<strong>All correct.</strong> This GC training layout is complete.';
-      } else {
-        feedbackText.textContent = `Still missing: ${missing.join(', ')}. Start with pressure, flow, temperature, then finish FID and PID.`;
-      }
+    resetBtn.addEventListener('click', () => {
+      score = 0;
+      dragged = null;
+      stopTimer();
+      startTime = null;
+      timerEl.textContent = '00:00';
+      items.forEach(item => {
+        item.classList.remove('used', 'dragging');
+        item.setAttribute('draggable', 'true');
+      });
+      zones.forEach(zone => {
+        zone.dataset.locked = 'false';
+        zone.classList.remove('correct', 'wrong', 'filled', 'over');
+        zone.innerHTML = '';
+      });
+      scoreEl.textContent = '0';
+      remainingEl.textContent = totalTargets;
+      setMessage('Board reset. Place all 14 targets correctly.', 'reset');
+      setExplanation('Awaiting placement', 'When you place an item correctly, a short explanation will appear here.');
     });
 
     hintBtn.addEventListener('click', () => {
-      if (hints <= 0) {
-        feedbackText.textContent = 'No hints left. Think process flow from inlet to output.';
-        return;
-      }
-      hints -= 1;
-      const next = Array.from(zones).find(z => !z.classList.contains('correct'));
-      if (!next) {
-        feedbackText.textContent = 'You already solved the full game.';
-        updateStats();
-        return;
-      }
-
-      const accepted = next.dataset.accept;
-      if (accepted === 'pressure') feedbackText.textContent = 'Hint: pressure belongs near the regulator area.';
-      else if (accepted === 'flow') feedbackText.textContent = 'Hint: flow belongs in the metered carrier / flow path.';
-      else if (accepted === 'temperature') feedbackText.textContent = 'Hint: temperature belongs where heating is controlled.';
-      else if (accepted === 'fid') feedbackText.textContent = 'Hint: FID is one of the detector modules on the outlet side.';
-      else if (accepted === 'pid') feedbackText.textContent = 'Hint: PID is the second detector module on the outlet side.';
-
-      updateStats();
+      hintsOn = !hintsOn;
+      zones.forEach(zone => zone.classList.toggle('show-hints', hintsOn));
+      setMessage(hintsOn ? 'Hints are visible.' : 'Hints are hidden.', 'ok');
     });
 
-    resetBtn.addEventListener('click', () => {
-      tries = 0;
-      hints = 3;
-      feedbackText.textContent = 'Start with the process logic: pressure near regulation, flow in the metered carrier path, temperature in the heated section, and the two detector types at the outlet analysis end.';
-      inventory.innerHTML = inventoryMarkup();
-      attachDraggables();
-      zones.forEach(resetZone);
-      updateStats();
-    });
-
-    inventory.innerHTML = inventoryMarkup();
-    attachDraggables();
+    loadBestTime();
     updateStats();
   </script>
 </body>
