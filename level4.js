@@ -536,11 +536,13 @@
 
     const symptomsHtml = s.symptoms.map(item => `<li>${escapeHtml(item)}</li>`).join("");
 
-    const choicesHtml = s.choices.map((choice, i) => `
-      <button class="l4-choice" data-choice="${escapeHtml(choice)}">
-        ${String.fromCharCode(65 + i)}. ${escapeHtml(choice)}
-      </button>
-    `).join("");
+const shuffledChoices = [...s.choices].sort(() => Math.random() - 0.5);
+
+const choicesHtml = shuffledChoices.map((choice, i) => `
+  <button class="l4-choice" data-choice="${escapeHtml(choice)}">
+    ${String.fromCharCode(65 + i)}. ${escapeHtml(choice)}
+  </button>
+`).join("");
 
     const stage = document.getElementById("l4-stage");
     stage.innerHTML = `
