@@ -514,6 +514,15 @@
     `;
   }
 
+  function shuffleArray(arr) {
+    const array = [...arr];
+    for (let i = array.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
   function loadScenario(index) {
     const s = simulatorData.scenarios[index];
     state.scenarioIndex = index;
@@ -527,22 +536,27 @@
 
     const severityClass = s.severity === "critical" ? "sev-critical" : "sev-warning";
 
-    const valuesHtml = Object.entries(s.values).map(([k, v]) => `
-      <div class="l4-value ${s.highlight_keys.includes(k) ? "highlight" : ""}">
-        <span class="l4-value-key">${escapeHtml(k)}</span>
-        <span class="l4-value-val">${escapeHtml(v)}</span>
-      </div>
-    `).join("");
+    const valuesHtml = Object.entries(s.values)
+      .map(([k, v]) => `
+        <div class="l4-value ${s.highlight_keys.includes(k) ? "highlight" : ""}">
+          <span class="l4-value-key">${escapeHtml(k)}</span>
+          <span class="l4-value-val">${escapeHtml(v)}</span>
+        </div>
+      `)
+      .join("");
 
-    const symptomsHtml = s.symptoms.map(item => `<li>${escapeHtml(item)}</li>`).join("");
+    const symptomsHtml = s.symptoms.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
 
-const shuffledChoices = [...s.choices].sort(() => Math.random() - 0.5);
-
-const choicesHtml = shuffledChoices.map((choice, i) => `
-  <button class="l4-choice" data-choice="${escapeHtml(choice)}">
-    ${String.fromCharCode(65 + i)}. ${escapeHtml(choice)}
-  </button>
-`).join("");
+    const shuffledChoices = shuffleArray(s.choices);
+    const choicesHtml = shuffledChoices
+      .map(
+        (choice, i) => `
+      <button class="l4-choice" data-choice="${escapeHtml(choice)}">
+        ${String.fromCharCode(65 + i)}. ${escapeHtml(choice)}
+      </button>
+    `
+      )
+      .join("");
 
     const stage = document.getElementById("l4-stage");
     stage.innerHTML = `
@@ -588,7 +602,7 @@ const choicesHtml = shuffledChoices.map((choice, i) => `
       </div>
     `;
 
-    document.querySelectorAll(".l4-choice").forEach(btn => {
+    document.querySelectorAll(".l4-choice").forEach((btn) => {
       btn.addEventListener("click", function () {
         if (state.locked) return;
         submitAnswer(this.getAttribute("data-choice"));
@@ -645,7 +659,7 @@ const choicesHtml = shuffledChoices.map((choice, i) => `
   }
 
   function markChoiceButtons(correctAnswer, selected) {
-    document.querySelectorAll(".l4-choice").forEach(btn => {
+    document.querySelectorAll(".l4-choice").forEach((btn) => {
       btn.classList.add("disabled");
       btn.disabled = true;
       const text = btn.getAttribute("data-choice");
@@ -729,11 +743,15 @@ const choicesHtml = shuffledChoices.map((choice, i) => `
   }
 
   function formatMode(mode) {
-    return mode.replaceAll("_", " ").replace(/\b\w/g, function (m) { return m.toUpperCase(); });
+    return mode.replaceAll("_", " ").replace(/\b\w/g, function (m) {
+      return m.toUpperCase();
+    });
   }
 
   function formatQuestionType(type) {
-    return type.replaceAll("_", " ").replace(/\b\w/g, function (m) { return m.toUpperCase(); });
+    return type.replaceAll("_", " ").replace(/\b\w/g, function (m) {
+      return m.toUpperCase();
+    });
   }
 
   function focusAreaFromCode(code) {
